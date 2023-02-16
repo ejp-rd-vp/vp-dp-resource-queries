@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-  Author/Maintainer: David Reinert (david.reinert@ejprd-project.eu)
+  Author/Maintainer: David Reinert (david.reinert@ejprd-project.eu), Aylin Demir (aylin.demir@ejprd-project.eu)
 */
 
 "use strict"
@@ -54,11 +54,13 @@ app.use('/api', rateLimit({
  * Add routes
  */
 
-app.use("/health", require('../src/routes/health'))
-app.use("/api", require('../src/routes/api'))
-app.use("/api/v1/search", require('../src/routes/apiV1Search'))
-app.use("/api/v1/individuals", require('../src/routes/individuals'))
-//app.use("/map", require('./routes/map'))
+app.use("/health", require('./routes/health'))
+app.use("/api", require('./routes/api'))
+app.use("/api/v1/search", require('./routes/apiV1Search'))
+app.use("/api/v1/individuals", require('./routes/individuals'))
+app.use("/classification", require('./routes/classification'))
+app.use("/map", require('./routes/map'))
+app.use("/genes", require('./routes/genes'))
 
 module.exports = app
 

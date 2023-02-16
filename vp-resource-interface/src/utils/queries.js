@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-  Author/Maintainer: David Reinert (david.reinert@ejprd-project.eu)
+  Author/Maintainer: David Reinert (david.reinert@ejprd-project.eu), Aylin Demir (aylin.demir@ejprd-project.eu)
 */
 
 "use strict"
@@ -22,6 +22,7 @@ const fetch = require("node-fetch")
 
 const handleFetchErrors = require('./utils').handleFetchErrors
 const logger = require('./logger')
+const Process = require("process");
 
 module.exports.executeCatalogueQuery = (source, query) => {
     try {
@@ -174,10 +175,9 @@ module.exports.executeIndividualsQuery = (source, beaconBody) => {
                 .then(async (fetchResponse) => {
                     if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
                         let data = await fetchResponse.json()
-                        console.log("ANSWER " + JSON.stringify(data));
-                       // resolve.json(data)
+                        resolve(data)
                     } else {
-                        //resolve.sendStatus(fetchResponse.status)
+                        resolve(fetchResponse.status)
                         return
                     }
             })
@@ -190,4 +190,88 @@ module.exports.executeIndividualsQuery = (source, beaconBody) => {
         logger.error('Error in executeVivifyQuery(): ' + exception)
         console.error("Error in executeVivifyQuery(): ", exception)
     }
+}
+
+
+
+module.exports.executeClassification = (code, way) => {
+    try {
+        let query = process.env.CLASSIFICATION_API+"code=" + code + "&way=" + way;
+        return new Promise(async (resolve, reject) => {
+            await fetch(query)
+                .then(this.handleFetchErrors)
+                .then(async (fetchResponse) => {
+                    if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
+                        const responseData = await fetchResponse.json();
+                        resolve(responseData)
+                    }else{
+                        reject(fetchResponse.status);
+                    }
+                })
+                .catch((exception) => {
+                    console.error(exception);
+                    // response.sendStatus(404);
+                })
+        })
+    }catch (exception) {
+        console.error("Error in portal:portal.js:app.get(/classification): ",exception);
+    }
+}
+
+module.exports.executeMapping = (code, from, to) => {
+    try {
+        let query = ""
+        if (to) {
+            query = Process.env.MAPPING_API+"from="+from+"&code="+code+"&to="+to;
+        }
+        else {
+            query = Process.env.MAPPING_API+"from="+from+"&code="+code;
+        }
+        return new Promise(async (resolve, reject) => {
+            await fetch(query)
+                .then(this.handleFetchErrors)
+                .then(async (fetchResponse) => {
+                    if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
+                        const responseData = await fetchResponse.json();
+                        resolve(responseData)
+                    }else{
+                        reject(fetchResponse.status);
+                    }
+                })
+                .catch((exception) => {
+                    console.error(exception);
+                    // response.sendStatus(404);
+                })
+        })
+    }catch (exception) {
+        console.error("Error in portal:portal.js:app.get(/map): ",exception);
+    }
+
+}
+
+module.exports.executeGenes = (input, by) => {
+    try {
+        let query = ""
+        query = Process.env.GENES_API+"by="+by+"&input="+input;
+
+        return new Promise(async (resolve, reject) => {
+            await fetch(query)
+                .then(this.handleFetchErrors)
+                .then(async (fetchResponse) => {
+                    if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
+                        const responseData = await fetchResponse.json();
+                        resolve(responseData)
+                    }else{
+                        reject(fetchResponse.status);
+                    }
+                })
+                .catch((exception) => {
+                    console.error(exception);
+                    // response.sendStatus(404);
+                })
+        })
+    }catch (exception) {
+        console.error("Error in portal:portal.js:app.get(/map): ",exception);
+    }
+
 }

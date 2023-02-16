@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright 2022 EJP-RD Partners
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,32 +13,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-  Author/Maintainer: David Reinert (david.reinert@ejprd-project.eu), Aylin Demir (aylin.demir@ejprd-project.eu)
+  Author/Maintainer: Aylin Demir (aylin.demir@ejprd-project.eu), David Reinert (david.reinert@ejprd-project.eu), Aylin Demir (aylin.demir@ejprd-project.eu)
 */
 
 "use strict"
 
-const express = require("express")
-const Process = require("process");
-const executeMapping = require("../utils/queries").executeMapping;
+const express = require("express");
+const router = express.Router();
+const executeClassification = require("../utils/queries").executeClassification;
 
-const router = express.Router()
 
 router.get("/", async (request, response) => {
     try {
-
         let dataToBeReturned = [];
         if(request.query.disease) {
 
-            //  let queryResult = await executeClassification(request.query.disease, request.query.way)
             let code = request.query.disease;
-            let from = request.query.from;
-            let to = request.query.to;
+            let way = request.query.way;
 
-            from = "orphanet";
-            to = "icd";
+            way = "up"
 
-            let queryResult = await executeMapping(code, from, to)
+            let queryResult = await executeClassification(code, way)
             if(queryResult) {
                 dataToBeReturned.push(queryResult)
             }
@@ -48,8 +43,10 @@ router.get("/", async (request, response) => {
             response.json('Invalid or missing mandatory parameter.')
         }
     } catch (exception) {
-        console.error("Error in portal:portal.js:app.get(/pingCatalogue): ", exception)
+        console.error("Error in classification.js/router:app.get(/classification): ", exception)
     }
 })
 
 module.exports = router
+
+

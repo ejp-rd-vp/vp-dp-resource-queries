@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright 2022 EJP-RD Partners
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,14 +13,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-  Author/Maintainer: David Reinert (david.reinert@ejprd-project.eu), Aylin Demir (aylin.demir@ejprd-project.eu)
+  Author/Maintainer: Aylin Demir (aylin.demir@ejprd-project.eu), David Reinert (david.reinert@ejprd-project.eu)
 */
 
 "use strict"
 
 const express = require("express")
 const Process = require("process");
-const executeMapping = require("../utils/queries").executeMapping;
+const executeGenes = require("../utils/queries").executeGenes;
 
 const router = express.Router()
 
@@ -30,15 +30,13 @@ router.get("/", async (request, response) => {
         let dataToBeReturned = [];
         if(request.query.disease) {
 
-            //  let queryResult = await executeClassification(request.query.disease, request.query.way)
-            let code = request.query.disease;
-            let from = request.query.from;
-            let to = request.query.to;
+            let input = request.query.disease;
+            let by = request.query.by;
 
-            from = "orphanet";
-            to = "icd";
+            input = "3603";
+            by = "hgnc";
 
-            let queryResult = await executeMapping(code, from, to)
+            let queryResult = await executeGenes(input, by)
             if(queryResult) {
                 dataToBeReturned.push(queryResult)
             }

@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-  Author/Maintainer: David Reinert (david.reinert@ejprd-project.eu)
+  Author/Maintainer: Aylin Demir (aylin.demir@ejprd-project.eu), David Reinert (david.reinert@ejprd-project.eu)
 */
 
 "use strict"
@@ -21,6 +21,7 @@
 const express = require("express")
 
 const logger = require('../utils/logger')
+const {executeClassification} = require("../utils/queries");
 const getSources = require('../utils/utils').getSources
 const extractQueryParameters = require('../utils/utils').extractQueryParameters
 const buildIndividualsBody = require('../utils/queryBuilders').buildIndividualsBody
