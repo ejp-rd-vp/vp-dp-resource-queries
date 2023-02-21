@@ -56,7 +56,6 @@ module.exports.buildIndividualsBody = (filters) => {
         body += '"query":{"filters":[';
 
         let genderCount = filters.genders.length;
-
         if(filters.ageThisYear == "") countFilters--;
         if(filters.ageAtDiagnosis == "") countFilters--;
         if (filters.genders != null ) {
@@ -94,14 +93,23 @@ module.exports.buildIndividualsBody = (filters) => {
                 countFilters--;
             }
         } if (filters.disease != null) {
-            body += '{"id": "Orphanet_'+ filters.disease+ '"}';
-            countFilters--;
-            if(countFilters > 1){
-                body += ",";
+            let disCode = ""
+            for(let i = 0; i <= filters.disease.length; i++){
+              //for(let disease in filters.disease){
+                if((filters.disease[i]==",") || (i == filters.disease.length)){
+                    body += '{"id": "Orphanet_' + disCode+ '"}';
+                    disCode = "";
+                    countFilters--;
+                    if(filters.disease[i]==",") {
+                        body += ",";
+                    }
+                }else{
+                    disCode += filters.disease[i];
+                }
             }
         } if (filters.phenotype != null) {
             body += '{"id": "HP_'
-            for (let i = 0; i < filters.disease.length; i++) {
+            for (let i = 0; i < filters.phenotype.length; i++) {
                 body += filters.phenotype[i];
             }
             body += '"}';

@@ -18,16 +18,24 @@
 
 "use strict"
 
-const fetch = require("node-fetch")
 
+const fetch = require("node-fetch")
 const handleFetchErrors = require('./utils').handleFetchErrors
 const logger = require('./logger')
 const Process = require("process");
+const Timeout = (time) => {
+    let controller = new AbortController();
+    setTimeout(() => controller.abort(), time * 1000);
+    return controller;
+};
+const TIME = 10;
 
 module.exports.executeCatalogueQuery = (source, query) => {
     try {
         return new Promise(async (resolve, reject) => {
-            await fetch(query)
+            await fetch(query, {
+                signal: Timeout(TIME).signal,
+            })
             .then(handleFetchErrors)
             .then(async (fetchResponse) => {
                 if(fetchResponse.status >= 200 && fetchResponse.status < 400) {
@@ -63,7 +71,8 @@ module.exports.executeCatalogueQuery = (source, query) => {
 module.exports.executeKnowledgeBaseQuery = (source, query) => {
   try {
     return new Promise(async (resolve, reject) => {
-      await fetch(query, {
+       await fetch(query, {
+          signal: Timeout(TIME).signal,
           headers: {
           'Accept': 'application/json'
           }
@@ -100,6 +109,7 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
   try {
     return new Promise(async (resolve, reject) => {
       await fetch(query, {
+        signal: Timeout(TIME).signal,
         method: 'post',
         body: JSON.stringify(beaconBody),
         headers: {'Content-Type': 'application/json', 'auth-token': token}
@@ -153,7 +163,7 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
   } 
 }
 
-module.exports.executeIndividualsQuery = (source, beaconBody) => {
+module.exports.executeIndividualsQuery = (source, individualsBody) => {
     try{
         let authkey = process.env.AUTH_KEY;
         authkey = authkey.toString();
@@ -167,9 +177,10 @@ module.exports.executeIndividualsQuery = (source, beaconBody) => {
         }
         return new Promise(async (resolve, reject) => {
             await fetch(`${source.catalogueAddress}`, {
+                signal: Timeout(TIME).signal,
                 method: 'post',
                 headers: {'Content-Type': 'application/json', 'auth-key': authkeyHeader}, //`process.env.${source["catalogueName"]}_AUTHKEY`},
-                body: beaconBody
+                body: individualsBody
             })
                 .then(this.handleFetchErrors)
                 .then(async (fetchResponse) => {
@@ -198,7 +209,9 @@ module.exports.executeClassification = (code, way) => {
     try {
         let query = process.env.CLASSIFICATION_API+"code=" + code + "&way=" + way;
         return new Promise(async (resolve, reject) => {
-            await fetch(query)
+            await fetch(query, {
+                signal: Timeout(TIME).signal,
+            })
                 .then(this.handleFetchErrors)
                 .then(async (fetchResponse) => {
                     if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
@@ -228,7 +241,9 @@ module.exports.executeMapping = (code, from, to) => {
             query = Process.env.MAPPING_API+"from="+from+"&code="+code;
         }
         return new Promise(async (resolve, reject) => {
-            await fetch(query)
+            await fetch(query, {
+                signal: Timeout(TIME).signal,
+            })
                 .then(this.handleFetchErrors)
                 .then(async (fetchResponse) => {
                     if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
@@ -255,7 +270,9 @@ module.exports.executeGenes = (input, by) => {
         query = Process.env.GENES_API+"by="+by+"&input="+input;
 
         return new Promise(async (resolve, reject) => {
-            await fetch(query)
+            await fetch(query, {
+                signal: Timeout(TIME).signal,
+            })
                 .then(this.handleFetchErrors)
                 .then(async (fetchResponse) => {
                     if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
