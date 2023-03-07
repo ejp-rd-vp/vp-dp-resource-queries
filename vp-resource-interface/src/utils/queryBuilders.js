@@ -95,17 +95,19 @@ module.exports.buildIndividualsBody = (filters) => {
         } if (filters.disease != null) {
             let disCode = ""
             for(let i = 0; i <= filters.disease.length; i++){
-              //for(let disease in filters.disease){
                 if((filters.disease[i]==",") || (i == filters.disease.length)){
                     body += '{"id": "Orphanet_' + disCode+ '"}';
                     disCode = "";
-                    countFilters--;
                     if(filters.disease[i]==",") {
                         body += ",";
                     }
                 }else{
                     disCode += filters.disease[i];
                 }
+            }
+            countFilters--;
+            if(countFilters > 1){
+                body += ",";
             }
         } if (filters.phenotype != null) {
             body += '{"id": "HP_'
