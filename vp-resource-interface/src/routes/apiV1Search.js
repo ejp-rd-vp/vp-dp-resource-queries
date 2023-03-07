@@ -67,20 +67,20 @@ router.get("/", async (request, response) => {
               dataToBeReturned.push(queryResult)
             }
             break
-          case 'ERKReg':
-          case 'EuRRECa':
-            if(parameters.token === undefined) {
-              logger.error(401 + ' Unauthorized for ' + source.catalogueName)
-              console.error(401 + ' Unauthorized for ' + source.catalogueName)
-              continue
-            }
-            query = `${source.catalogueAddress}individuals`
-            let beaconBody = buildBeaconBody(parameters)
-            queryResult = await executeBeaconQuery(source, query, beaconBody, parameters.token)
-            if(queryResult) {
-              dataToBeReturned.push(queryResult)
-            }
-            break
+          // case 'erkreg':
+          // case 'eurreca':
+          //   if(parameters.token === undefined) {
+          //     logger.error(401 + ' Unauthorized for ' + source.catalogueName)
+          //     console.error(401 + ' Unauthorized for ' + source.catalogueName)
+          //     continue
+          //   }
+          //   query = `${source.catalogueAddress}individuals`
+          //   let beaconBody = buildBeaconBody(parameters)
+          //   queryResult = await executeBeaconQuery(source, query, beaconBody, parameters.token)
+          //   if(queryResult) {
+          //     dataToBeReturned.push(queryResult)
+          //   }
+          //   break
           default:
             logger.warn(`Entering default switch of route /api/v1/search for ${source.catalogueName}`)
           //  console.warning(`Entering default switch of route /api/v1/search for ${source.catalogueName}`)
