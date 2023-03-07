@@ -31,6 +31,17 @@ const executeKnowledgeBaseQuery = require('../utils/queries').executeKnowledgeBa
 
 const router = express.Router()
 
+const TIMEOUT = 3000
+const withTimeout = (millis, promise) => {
+  const timeout = new Promise((resolve, reject) =>
+      setTimeout(
+          () => resolve(null),
+          millis));
+  return Promise.race([
+    promise,
+    timeout
+  ]);
+};
 router.get("/", async (request, response) => {
   try {
     if(request.query.disease) {
@@ -57,15 +68,15 @@ router.get("/", async (request, response) => {
           case 'wikipathways':
           case 'hpscreg':
             query = `${source.catalogueAddress}?code=http://www.orpha.net/ORDO/Orphanet_${parameters.diseaseCode}`
-            queryResult = await executeKnowledgeBaseQuery(source, query)
+            queryResult = await withTimeout(TIMEOUT, executeKnowledgeBaseQuery(source, query))
             if(queryResult) {
               dataToBeReturned.push(queryResult)
             }
             break
-          case 'Orphanet':
-          case 'BBMRI-Eric':
+          case 'orphanet':
+          case 'bbmri-eric':
             query = buildCatalogueQuery(source.catalogueAddress, parameters.diseaseCode, parameters.selectedTypes, parameters.selectedCountries)
-            queryResult = await executeCatalogueQuery(source, query)
+            queryResult = await withTimeout(TIMEOUT, executeCatalogueQuery(source, query))
             if(queryResult) {
               dataToBeReturned.push(queryResult)
             }
