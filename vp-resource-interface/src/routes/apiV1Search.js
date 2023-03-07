@@ -49,10 +49,13 @@ router.get("/", async (request, response) => {
       let queryResult = {}
 
       for(let source of sources) {
-        switch(source.catalogueName) {
-          case 'Cellosaurus': 
-          case 'Wikipathways': 
-          case 'hPSCreg':
+        if (!source.catalogueAddress) {
+          continue
+        }
+        switch(source.catalogueName.toLowerCase()) {
+          case 'cellosaurus':
+          case 'wikipathways':
+          case 'hpscreg':
             query = `${source.catalogueAddress}?code=http://www.orpha.net/ORDO/Orphanet_${parameters.diseaseCode}`
             queryResult = await executeKnowledgeBaseQuery(source, query)
             if(queryResult) {
