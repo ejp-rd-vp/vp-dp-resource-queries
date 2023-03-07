@@ -23,44 +23,34 @@ const fetch = require("node-fetch")
 const handleFetchErrors = require('./utils').handleFetchErrors
 const logger = require('./logger')
 const Process = require("process");
-const Timeout = (time) => {
-    let controller = new AbortController();
-    setTimeout(() => controller.abort(), time * 1000);
-    return controller;
-};
-const TIME = 10;
 
 module.exports.executeCatalogueQuery = (source, query) => {
     try {
         return new Promise(async (resolve, reject) => {
-            await fetch(query, {
-                signal: Timeout(TIME).signal,
-            })
-            .then(handleFetchErrors)
-            .then(async (fetchResponse) => {
-                if(fetchResponse.status >= 200 && fetchResponse.status < 400) {
-                let contentTemp = await fetchResponse.json()
-                if(contentTemp.resourceResponses.length > 0) {
-                    let returnData = {
-                      name: source.catalogueName,
-                      content: contentTemp,
+            await fetch(query)
+                .then(handleFetchErrors)
+                .then(async (fetchResponse) => {
+                    if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
+                        let contentTemp = await fetchResponse.json()
+                        if (contentTemp.resourceResponses.length > 0) {
+                            let returnData = {
+                                name: source.catalogueName,
+                                content: contentTemp,
+                            }
+                            resolve(returnData)
+                        } else {
+                            console.log(source.catalogueName + ': ' + 204)
+                            resolve(null)
+                        }
+                    } else {
+                        console.log(source.catalogueName + ': ' + fetchResponse.status)
+                        resolve(null)
                     }
-                    resolve(returnData)
-                }
-                else {
-                    console.log(source.catalogueName + ': ' + 204)
-                    resolve(null)
-                }
-                }
-                else {
-                    console.log(source.catalogueName + ': ' + fetchResponse.status)
-                    resolve(null)
-                }
-            })
-            .catch((exception) => {
-                logger.log('error', 'Error in executeCatalogueQuery():fetch(): ' + exception)
-                console.error("Error in executeCatalogueQuery():fetch(): ", exception)
-            })
+                })
+                .catch((exception) => {
+                    logger.log('error', 'Error in executeCatalogueQuery():fetch(): ' + exception)
+                    console.error("Error in executeCatalogueQuery():fetch(): ", exception)
+                })
         })
     } catch(exception) {
         logger.log('error', 'Error in executeCatalogueQuery(): ' + exception)
@@ -71,33 +61,32 @@ module.exports.executeCatalogueQuery = (source, query) => {
 module.exports.executeKnowledgeBaseQuery = (source, query) => {
   try {
     return new Promise(async (resolve, reject) => {
-       await fetch(query, {
-          signal: Timeout(TIME).signal,
-          headers: {
-          'Accept': 'application/json'
-          }
-      })
-      .then(handleFetchErrors)
-      .then(async (fetchResponse) => {
-          if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
-            let contentTemp = await fetchResponse.json()
-            if(contentTemp.length > 0 && contentTemp[0]['resourceResponses']) {
-              let returnData = {
-                name: source.catalogueName,
-                content: contentTemp[0],
-              }
-              resolve(returnData)
-            }
-          }
-          else {
-            console.log(source.catalogueName + ': ' + fetchResponse.status)
-            resolve(null)
-          }
-      })
-      .catch((exception) => {
-          logger.log('error', 'Error in executeKnowledgeBaseQuery():fetch(): ' + exception)
-          console.error("Error in executeKnowledgeBaseQuery():fetch(): ", exception)
-      })
+        await fetch(query, {
+            headers: {'Accept': 'application/json'}
+        })
+            .then(handleFetchErrors)
+            .then(async (fetchResponse) => {
+                if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
+                    let contentTemp = await fetchResponse.json()
+                    if (contentTemp.length > 0 && contentTemp[0]['resourceResponses']) {
+                        let returnData = {
+                            name: source.catalogueName,
+                            content: contentTemp[0],
+                        }
+                        if (returnData.content.resourceResponses.constructor.name !== "Array") {
+                            returnData.content.resourceResponses = [returnData.content.resourceResponses]
+                        }
+                        resolve(returnData)
+                    }
+                } else {
+                    console.log(source.catalogueName + ': ' + fetchResponse.status)
+                    resolve(null)
+                }
+            })
+            .catch((exception) => {
+                logger.log('error', 'Error in executeKnowledgeBaseQuery():fetch(): ' + exception)
+                console.error("Error in executeKnowledgeBaseQuery():fetch(): ", exception)
+            })
     })
   } catch(exception) {
     logger.log('error', 'Error in executeKnowledgeBaseQuery(): ' + exception)
@@ -109,7 +98,6 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
   try {
     return new Promise(async (resolve, reject) => {
       await fetch(query, {
-        signal: Timeout(TIME).signal,
         method: 'post',
         body: JSON.stringify(beaconBody),
         headers: {'Content-Type': 'application/json', 'auth-token': token}
@@ -119,7 +107,7 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
         if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
           let contentTemp = await fetchResponse.json()
           if(contentTemp['responseSummary'].numTotalResults > 0 && contentTemp["resultSets"].length > 0) {
-            if (source.catalogueName == 'ERKReg') {
+            if (source.catalogueName.toLowerCase() == 'erkreg') {
               for (let result of contentTemp["resultSets"]) {
                 if (result.id == 'ERKReg' && result.resultCount > 0) {
                   let returnData = {
@@ -130,9 +118,9 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
                 }
               }
             }
-            else if (source.catalogueName == 'EuRRECa') {
+            else if (source.catalogueName == 'eurreca') {
               for (let result of contentTemp["resultSets"]) {
-                if (result.id == 'EuRRECa' && result.resultCount > 0) {
+                if (result.id.toLowerCase() == 'eurreca' && result.resultCount > 0) {
                   let returnData = {
                     name: result.Info.contactPoint,
                     content: result
