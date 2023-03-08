@@ -45,6 +45,7 @@ module.exports.executeCatalogueQuery = (source, query) => {
                       name: source.catalogueName,
                       content: contentTemp,
                     }
+                    console.log("executeCatalogueQuery "+returnData)
                     resolve(returnData)
                 }
                 else {

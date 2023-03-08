@@ -31,14 +31,23 @@ const router = express.Router()
 
 router.get("/", async (request, response) => {
     try {
+        console.log("INDIVIDUALS");
         let dataToBeReturned = [];
-        if(request.query.disease && request.query.source) {
-            const source = JSON.parse(request.query.source)
+      //  if(request.query.disease && request.query.source) {
+        if(request.query.disease){
+            console.log("request.query.source");
+            let sourceString = '["'+request.query.catalogueName +'", "'+ request.query.catalogueAddress+'"]';
+            console.log(request.query.catalogueName);
+            console.log(request.query.catalogueAddress);
+            console.log("sourceString");
+            console.log(sourceString);
+            const source = JSON.parse(sourceString)
+
             let filters = {
                 disease: '',
                 genders: [],
                 ageThisYear: '',
-                ageAtDiseaseManifestation: '',
+                symptomOnset: '',
                 ageAtDiagnosis: ''
             }
             filters.disease = request.query.disease
@@ -48,13 +57,14 @@ router.get("/", async (request, response) => {
             if(request.query.ageThisYear){
                 filters.ageThisYear = request.query.ageThisYear
             }
-            if(request.query.ageAtDiseaseManifestation){
-                filters.ageAtDiseaseManifestation = request.query.ageAtDiseaseManifestation
+            if(request.query.symptomOnset){
+                filters.symptomOnset = request.query.symptomOnset
             }
             if(request.query.ageAtDiagnosis){
                 filters.ageAtDiagnosis = request.query.ageAtDiagnosis
             }
 
+            console.log("filters "+JSON.stringify(filters))
             //  let body = this.buildBeaconNetworkQuery(filters);
             let body = buildIndividualsBody(filters); //vp-api-spec v0.2
             let queryResult = executeIndividualsQuery(source, body)
@@ -62,6 +72,7 @@ router.get("/", async (request, response) => {
                 dataToBeReturned.push(queryResult)
             }
             response.status(200).json(dataToBeReturned)
+            console.log("ANSWER "+queryResult)
         }
         else {
             response.json('Invalid or missing mandatory parameter.')

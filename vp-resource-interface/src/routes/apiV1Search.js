@@ -36,39 +36,59 @@ router.get("/", async (request, response) => {
     if(request.query.disease) {
       let sources = []
       // use all sources from the vp resource index
-      if(!request.query.source) {
+     /* if(!request.query.source) {
         sources = await getSources()
       }
       // use source specified in request
       else {
         sources.push(JSON.parse(request.query.source))
       }
+*/
+      sources = await getSources();
+     // console.log("SOURCES "+JSON.stringify(sources))
       const parameters = extractQueryParameters(request)
       let dataToBeReturned = []
       let query = ''
       let queryResult = {}
 
       for(let source of sources) {
+        console.log("SOURCE "+source.catalogueName+" "+source.catalogueAddress+" "+source.catalogueType)
+      /*  if(queryType.includes('individuals')){
+
+        }else if(queryType.includes('search.Catalogue')){
+
+
+        }else if(queryType.includes('search.Knowledge')){
+
+        }else {
+        }*/
         switch(source.catalogueName) {
-          case 'Cellosaurus': 
-          case 'Wikipathways': 
-          case 'hPSCreg':
-            query = `${source.catalogueAddress}?code=http://www.orpha.net/ORDO/Orphanet_${parameters.diseaseCode}`
-            queryResult = await executeKnowledgeBaseQuery(source, query)
+          case 'Orphanet':
+          case 'BBMRI-Eric':
+         // case 'search.Catalogue':
+            query = buildCatalogueQuery(source.catalogueAddress, parameters.diseaseCode, parameters.selectedTypes, parameters.selectedCountries)
+            queryResult = await executeCatalogueQuery(source, query)
             if(queryResult) {
               dataToBeReturned.push(queryResult)
             }
+            console.log("ANSWER "+source.catalogueName+queryResult)
             break
-          case 'Orphanet':
-          case 'BBMRI-Eric':
-            query = buildCatalogueQuery(source.catalogueAddress, parameters.diseaseCode, parameters.selectedTypes, parameters.selectedCountries)
-            queryResult = await executeCatalogueQuery(source, query)
+          case 'Cellosaurus':
+            case 'Wikipathways':
+            case 'hPSCreg':
+         // case 'search.Knowledge':
+            console.log("Knowledge")
+            query = `${source.catalogueAddress}?code=http://www.orpha.net/ORDO/Orphanet_${parameters.diseaseCode}`
+            console.log("Knowledge Query "+query)
+            queryResult = await executeKnowledgeBaseQuery(source, query)
+            console.log("ANSWER "+source.catalogueName+JSON.stringify(queryResult))
             if(queryResult) {
               dataToBeReturned.push(queryResult)
             }
             break
           case 'ERKReg':
           case 'EuRRECa':
+         // case 'registry':
             if(parameters.token === undefined) {
               logger.error(401 + ' Unauthorized for ' + source.catalogueName)
               console.error(401 + ' Unauthorized for ' + source.catalogueName)
@@ -80,6 +100,7 @@ router.get("/", async (request, response) => {
             if(queryResult) {
               dataToBeReturned.push(queryResult)
             }
+            console.log("ANSWER "+source.catalogueName+queryResult)
             break
           default:
             logger.warn(`Entering default switch of route /api/v1/search for ${source.catalogueName}`)

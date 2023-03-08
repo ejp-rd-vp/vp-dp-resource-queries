@@ -50,17 +50,27 @@ function gendersInString(gendersstring){
 module.exports.buildIndividualsBody = (filters) => {
     try {
 
+        console.log("JSON.stringify(filters)");
+        console.log(JSON.stringify(filters.genders));
+
         let countFilters = Object.keys(filters).length;
         let body = '{"meta": { "apiVersion": "v2.0"},';
 
         body += '"query":{"filters":[';
 
+        //TODO: change ' to " in the filters
+   /*     for (let f in filters){
+            f.replace("'",'"');
+        }
+*/
         let genderCount = filters.genders.length;
         if(filters.ageThisYear == "") countFilters--;
         if(filters.ageAtDiagnosis == "") countFilters--;
+        if(filters.symptomOnset == "") countFilters--;
         if (filters.genders != null ) {
             if(filters.genders.includes("female") && filters.genders.includes("male") && filters.genders.includes("undetermined") && filters.genders.includes("undetermined")){
                 countFilters--;
+                console.log("all genders "+ JSON.stringify(filters.genders));
             }else {
                 if (filters.genders.includes("female")) {
                     body += '{"id": "NCIT_C28421","operator": "=","value": "' + this.gendersInString("female") + '"}';
@@ -92,6 +102,9 @@ module.exports.buildIndividualsBody = (filters) => {
                 }
                 countFilters--;
             }
+
+            console.log("BODY GENDER: "+body)
+
         } if (filters.disease != null) {
             let disCode = ""
             for(let i = 0; i <= filters.disease.length; i++){
@@ -109,6 +122,7 @@ module.exports.buildIndividualsBody = (filters) => {
             if(countFilters > 1){
                 body += ",";
             }
+            console.log("BODY disease: "+body)
         } if (filters.phenotype != null) {
             body += '{"id": "HP_'
             for (let i = 0; i < filters.phenotype.length; i++) {
@@ -130,32 +144,76 @@ module.exports.buildIndividualsBody = (filters) => {
                 body += ",";
             }
         } if (filters.ageThisYear != "") {
-            body += '{"id": "NCIT_C83164","operator": "=","value": "';
-            for (let i = 0; i < filters.ageThisYear.length; i++){
-                body += filters.ageThisYear[i]
+            if(filters.ageThisYear.length > 0){
+                body += '{"id": "NCIT_C83164","operator": ">=","value": "';
+                let i = 0;
+                while(  filters.ageThisYear[i] != ",") {
+                    body += filters.ageThisYear[i]
+                }
+                body += '"}';
+                body += '{"id": "NCIT_C83164","operator": ">=","value": "';
+                while(i < filters.ageThisYear.length){
+                    body += filters.ageThisYear[i]
+                }
+                body += '"}';
+            }else{
+                body += '{"id": "NCIT_C83164","operator": "=","value": "';
+                for (let i = 0; i < filters.ageThisYear.length; i++){
+                    body += filters.ageThisYear[i]
+                }
             }
             body += '"}';
             countFilters--;
             if(countFilters > 1){
                 body += ",";
             }
-        } else if(filters.ageAtDiseaseManifestation != ""){  //symptomOnset
-            body +='{"id": "NCIT_C124353","operator": "=","value": "'
-            for(let i = 0; i<filters.ageAtDiseaseManifestation.length; i++) {
-                body += filters.ageAtDiseaseManifestation[i];
+            console.log("BODY ageThisyear: "+body)
+        } else if(filters.symptomOnset != ""){  //symptomOnset
+            if(filters.symptomOnset.length > 0){
+                body += '{"id": "NCIT_C124353","operator": ">=","value": "';
+                let i = 0;
+                while(  filters.symptomOnset[i] != ",") {
+                    body += filters.symptomOnset[i]
+                }
+                body += '"}';
+                body += '{"id": "NCIT_C124353","operator": ">=","value": "';
+                while(i < filters.symptomOnset.length){
+                    body += filters.symptomOnset[i]
+                }
+                body += '"}';
+            }else {
+                body += '{"id": "NCIT_C124353","operator": "=","value": "'
+                for (let i = 0; i < filters.symptomOnset.length; i++) {
+                    body += filters.symptomOnset[i];
+                }
+                body += '"}';
             }
-            body += '"}';
             countFilters--;
             if(countFilters > 1){
                 body += ",";
             }
         } if (filters.ageAtDiagnosis != "") {
-            body += '{"id": "NCIT_C156420","operator": "=","value": "'
-            for(let i = 0; i<filters.ageAtDiagnosis.length; i++) {
-                body += filters.ageAtDiagnosis[i];
-                //            console.log("filters Age at Diagnosis FOR Schleife "+filters.ageAtDiagnosis)
+
+            if(filters.ageAtDiagnosis.length > 0){
+                body += '{"id": "NCIT_C156420","operator": ">=","value": "';
+                let i = 0;
+                while(  filters.ageAtDiagnosis[i] != ",") {
+                    body += filters.ageAtDiagnosis[i]
+                }
+                body += '"}';
+                body += '{"id": "NCIT_C156420","operator": ">=","value": "';
+                while(i < filters.ageAtDiagnosis.length){
+                    body += filters.ageAtDiagnosis[i]
+                }
+                body += '"}';
+            }else {
+                body += '{"id": "NCIT_C156420","operator": "=","value": "'
+                for (let i = 0; i < filters.ageAtDiagnosis.length; i++) {
+                    body += filters.ageAtDiagnosis[i];
+                    //            console.log("filters Age at Diagnosis FOR Schleife "+filters.ageAtDiagnosis)
+                }
+                body += '"}';
             }
-            body += '"}';
             countFilters--;
             if(countFilters > 1){
                 body += ",";
@@ -177,6 +235,7 @@ module.exports.buildIndividualsBody = (filters) => {
              }*/
         }
         body += ']}}'
+        console.log("BODY "+body)
         return body;
     }catch (exception) {
         console.error("Error in portal.js:buildVivifyNetworkQuery(): ", exception);
