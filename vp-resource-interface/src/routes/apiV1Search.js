@@ -31,6 +31,17 @@ const executeKnowledgeBaseQuery = require('../utils/queries').executeKnowledgeBa
 
 const router = express.Router()
 
+const TIMEOUT = 3000
+const withTimeout = (millis, promise) => {
+  const timeout = new Promise((resolve, reject) =>
+      setTimeout(
+          () => resolve(null),
+          millis));
+  return Promise.race([
+    promise,
+    timeout
+  ]);
+};
 router.get("/", async (request, response) => {
   try {
     if(request.query.disease) {
@@ -78,7 +89,23 @@ router.get("/", async (request, response) => {
             case 'hPSCreg':
          // case 'search.Knowledge':
             console.log("Knowledge")
+        if (!source.catalogueAddress) {
+          continue
+        }
+        switch(source.catalogueName.toLowerCase()) {
+          case 'cellosaurus':
+          case 'wikipathways':
+          case 'hpscreg':
             query = `${source.catalogueAddress}?code=http://www.orpha.net/ORDO/Orphanet_${parameters.diseaseCode}`
+            queryResult = await withTimeout(TIMEOUT, executeKnowledgeBaseQuery(source, query))
+            if(queryResult) {
+              dataToBeReturned.push(queryResult)
+            }
+            break
+          case 'orphanet':
+          case 'bbmri-eric':
+            query = buildCatalogueQuery(source.catalogueAddress, parameters.diseaseCode, parameters.selectedTypes, parameters.selectedCountries)
+            queryResult = await withTimeout(TIMEOUT, executeCatalogueQuery(source, query))
             console.log("Knowledge Query "+query)
             queryResult = await executeKnowledgeBaseQuery(source, query)
             console.log("ANSWER "+source.catalogueName+JSON.stringify(queryResult))
@@ -86,6 +113,20 @@ router.get("/", async (request, response) => {
               dataToBeReturned.push(queryResult)
             }
             break
+          // case 'erkreg':
+          // case 'eurreca':
+          //   if(parameters.token === undefined) {
+          //     logger.error(401 + ' Unauthorized for ' + source.catalogueName)
+          //     console.error(401 + ' Unauthorized for ' + source.catalogueName)
+          //     continue
+          //   }
+          //   query = `${source.catalogueAddress}individuals`
+          //   let beaconBody = buildBeaconBody(parameters)
+          //   queryResult = await executeBeaconQuery(source, query, beaconBody, parameters.token)
+          //   if(queryResult) {
+          //     dataToBeReturned.push(queryResult)
+          //   }
+          //   break
           case 'ERKReg':
           case 'EuRRECa':
          // case 'registry':
@@ -109,7 +150,7 @@ router.get("/", async (request, response) => {
         }
       }
       response.status(200).json(dataToBeReturned)
-    }
+    }}
     else {
       logger.error('HTTP 400: Invalid or missing mandatory parameter.')
       response.status(400).json('Invalid or missing mandatory parameter.')

@@ -110,7 +110,6 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
   try {
     return new Promise(async (resolve, reject) => {
       await fetch(query, {
-        signal: Timeout(TIME).signal,
         method: 'post',
         body: JSON.stringify(beaconBody),
         headers: {'Content-Type': 'application/json', 'auth-token': token}
@@ -120,7 +119,7 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
         if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
           let contentTemp = await fetchResponse.json()
           if(contentTemp['responseSummary'].numTotalResults > 0 && contentTemp["resultSets"].length > 0) {
-            if (source.catalogueName == 'ERKReg') {
+            if (source.catalogueName.toLowerCase() == 'erkreg') {
               for (let result of contentTemp["resultSets"]) {
                 if (result.id == 'ERKReg' && result.resultCount > 0) {
                   let returnData = {
@@ -131,9 +130,9 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
                 }
               }
             }
-            else if (source.catalogueName == 'EuRRECa') {
+            else if (source.catalogueName == 'eurreca') {
               for (let result of contentTemp["resultSets"]) {
-                if (result.id == 'EuRRECa' && result.resultCount > 0) {
+                if (result.id.toLowerCase() == 'eurreca' && result.resultCount > 0) {
                   let returnData = {
                     name: result.Info.contactPoint,
                     content: result
