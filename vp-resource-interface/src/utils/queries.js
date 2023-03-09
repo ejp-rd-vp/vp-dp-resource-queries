@@ -21,46 +21,41 @@
 
 const fetch = require("node-fetch")
 const handleFetchErrors = require('./utils').handleFetchErrors
+const numberToRandomRange = require('./utils').numberToRandomRange
+const convertResourceResponsesToArray = require('./utils').convertResourceResponsesToArray
 const logger = require('./logger')
 const Process = require("process");
-const Timeout = (time) => {
-    let controller = new AbortController();
-    setTimeout(() => controller.abort(), time * 1000);
-    return controller;
-};
-const TIME = 10;
 
 module.exports.executeCatalogueQuery = (source, query) => {
     try {
         return new Promise(async (resolve, reject) => {
-            await fetch(query, {
-                signal: Timeout(TIME).signal,
-            })
+            await fetch(query)
             .then(handleFetchErrors)
             .then(async (fetchResponse) => {
                 if(fetchResponse.status >= 200 && fetchResponse.status < 400) {
                 let contentTemp = await fetchResponse.json()
                 if(contentTemp.resourceResponses.length > 0) {
                     let returnData = {
-                      name: source.catalogueName,
-                      content: contentTemp,
+                        name: source.resourceName,
+                        numTotalResults: contentTemp.resourceResponses.length,
+                        content: contentTemp,
                     }
-                    console.log("executeCatalogueQuery "+returnData)
                     resolve(returnData)
                 }
                 else {
-                    console.log(source.catalogueName + ': ' + 204)
+                    console.log(source.resourceName + ': ' + 204)
                     resolve(null)
                 }
                 }
                 else {
-                    console.log(source.catalogueName + ': ' + fetchResponse.status)
+                    console.log(source.resourceName + ': ' + fetchResponse.status)
                     resolve(null)
                 }
             })
             .catch((exception) => {
                 logger.log('error', 'Error in executeCatalogueQuery():fetch(): ' + exception)
                 console.error("Error in executeCatalogueQuery():fetch(): ", exception)
+                resolve(null)
             })
         })
     } catch(exception) {
@@ -73,7 +68,6 @@ module.exports.executeKnowledgeBaseQuery = (source, query) => {
   try {
     return new Promise(async (resolve, reject) => {
        await fetch(query, {
-          signal: Timeout(TIME).signal,
           headers: {
           'Accept': 'application/json'
           }
@@ -82,16 +76,18 @@ module.exports.executeKnowledgeBaseQuery = (source, query) => {
       .then(async (fetchResponse) => {
           if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
             let contentTemp = await fetchResponse.json()
-            if(contentTemp.length > 0 && contentTemp[0]['resourceResponses']) {
+              if(contentTemp.length > 0 && contentTemp[0]['resourceResponses']) {
+                  const content = convertResourceResponsesToArray(contentTemp[0])
               let returnData = {
-                name: source.catalogueName,
-                content: contentTemp[0],
+                  name: source.resourceName,
+                  numTotalResults: content.resourceResponses.length,
+                  content
               }
               resolve(returnData)
             }
           }
           else {
-            console.log(source.catalogueName + ': ' + fetchResponse.status)
+            console.log(source.resourceName + ': ' + fetchResponse.status)
             resolve(null)
           }
       })
@@ -119,7 +115,7 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
         if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
           let contentTemp = await fetchResponse.json()
           if(contentTemp['responseSummary'].numTotalResults > 0 && contentTemp["resultSets"].length > 0) {
-            if (source.catalogueName.toLowerCase() == 'erkreg') {
+            if (source.resourceName.toLowerCase() == 'erkreg') {
               for (let result of contentTemp["resultSets"]) {
                 if (result.id == 'ERKReg' && result.resultCount > 0) {
                   let returnData = {
@@ -130,7 +126,7 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
                 }
               }
             }
-            else if (source.catalogueName == 'eurreca') {
+            else if (source.resourceName == 'eurreca') {
               for (let result of contentTemp["resultSets"]) {
                 if (result.id.toLowerCase() == 'eurreca' && result.resultCount > 0) {
                   let returnData = {
@@ -143,12 +139,12 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
             }
           }
           else {
-            console.log(source.catalogueName + ': ' + 204)
+            console.log(source.resourceName + ': ' + 204)
             resolve(null)
           }
         }
         else {
-          console.log(source.catalogueName + ': ' + fetchResponse.status)
+          console.log(source.resourceName + ': ' + fetchResponse.status)
           resolve(null)
         }
       })
@@ -163,41 +159,83 @@ module.exports.executeBeaconQuery = (source, query, beaconBody, token) => {
   } 
 }
 
+module.exports.executeHierarchyQuery = (code, way) => {
+    try {
+        const query = 'http://155.133.131.171:8080/ClassifTraversal/hierarchies/traverse?code=' + code + '&way=' + way
+        return new Promise(async (resolve, reject) => {
+            await fetch(query, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(handleFetchErrors)
+                .then(async (fetchResponse) => {
+                    if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
+                        let contentTemp = await fetchResponse.json()
+                        let orphaCodes = []
+                        if (way.toLowerCase() === 'up') {
+                            for (let parent of contentTemp.parents) {
+                                for (let parentParent of parent.parents) {
+                                    orphaCodes.push('Orphanet_' + parentParent.code)
+                                }
+                            }
+                        }
+                        if (way.toLowerCase() === 'down') {
+                            for (let child of contentTemp.childs) {
+                                for (let childChild of child.childs) {
+                                    orphaCodes.push('Orphanet_' + childChild.code)
+                                }
+                            }
+                        }
+                        resolve(orphaCodes)
+                    }
+                    else {
+                        console.log(source.resourceName + ': ' + fetchResponse.status)
+                        resolve(null)
+                    }
+                })
+                .catch((exception) => {
+                    logger.log('error', 'Error in executeKnowledgeBaseQuery():fetch(): ' + exception)
+                    console.error("Error in executeKnowledgeBaseQuery():fetch(): ", exception)
+                })
+        })
+    } catch(exception) {
+        logger.log('error', 'Error in executeKnowledgeBaseQuery(): ' + exception)
+        console.error("Error in executeKnowledgeBaseQuery(): ", exception)
+    }
+}
+
 module.exports.executeIndividualsQuery = (source, individualsBody) => {
     try{
-        let authkey = process.env.AUTH_KEY;
-        authkey = authkey.toString();
-        let authkeyArray = authkey.split("/");
-        let authkeyHeader = "";
-        for(let a = 0; a < authkeyArray.length; a++){
-            if(authkeyArray[a].includes(source["catalogueName"])){
-                let authkeyArraySplit = authkeyArray[a].split(":");
-                authkeyHeader = authkeyArraySplit[1];
-            }
-        }
+        const authKey = JSON.parse(process.env.AUTH_KEYS)[source.resourceName];
         return new Promise(async (resolve, reject) => {
-            await fetch(`${source.catalogueAddress}`, {
-                signal: Timeout(TIME).signal,
+            await fetch(`${source.resourceAddress}`, {
                 method: 'post',
-                headers: {'Content-Type': 'application/json', 'auth-key': authkeyHeader}, //`process.env.${source["catalogueName"]}_AUTHKEY`},
+                headers: {'Accept': 'application/json', 'auth-key': authKey},
                 body: individualsBody
             })
                 .then(this.handleFetchErrors)
                 .then(async (fetchResponse) => {
                     if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
                         let data = await fetchResponse.json()
-                        resolve(data)
+                        let returnData = {
+                            name: source.resourceName,
+                            numTotalResults: numberToRandomRange(data.responseSummary.numTotalResults, 15),
+                            content: { resourceResponses: null }
+                        }
+                        resolve(returnData)
                     } else {
                         resolve(fetchResponse.status)
                         return
                     }
             })
             .catch((exception) => {
-                logger.log('error', 'Error in portal:portal.js:app.get(/individuals):fetch(): ' + exception, source["catalogueName"]);
+                logger.log('error', 'Error in portal:portal.js:app.get(/individuals):fetch(): ' + exception, source["resourceName"]);
                 console.error("Error in portal:portal.js:app.get(/individuals):fetch(): ", exception);
+                resolve(null)
             })
         })
-    }catch(exception) {
+    } catch(exception) {
         logger.error('Error in executeVivifyQuery(): ' + exception)
         console.error("Error in executeVivifyQuery(): ", exception)
     }
@@ -209,9 +247,7 @@ module.exports.executeClassification = (code, way) => {
     try {
         let query = process.env.CLASSIFICATION_API+"code=" + code + "&way=" + way;
         return new Promise(async (resolve, reject) => {
-            await fetch(query, {
-                signal: Timeout(TIME).signal,
-            })
+            await fetch(query)
                 .then(this.handleFetchErrors)
                 .then(async (fetchResponse) => {
                     if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
@@ -241,9 +277,7 @@ module.exports.executeMapping = (code, from, to) => {
             query = Process.env.MAPPING_API+"from="+from+"&code="+code;
         }
         return new Promise(async (resolve, reject) => {
-            await fetch(query, {
-                signal: Timeout(TIME).signal,
-            })
+            await fetch(query)
                 .then(this.handleFetchErrors)
                 .then(async (fetchResponse) => {
                     if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
@@ -270,9 +304,7 @@ module.exports.executeGenes = (input, by) => {
         query = Process.env.GENES_API+"by="+by+"&input="+input;
 
         return new Promise(async (resolve, reject) => {
-            await fetch(query, {
-                signal: Timeout(TIME).signal,
-            })
+            await fetch(query)
                 .then(this.handleFetchErrors)
                 .then(async (fetchResponse) => {
                     if (fetchResponse.status >= 200 && fetchResponse.status < 400) {

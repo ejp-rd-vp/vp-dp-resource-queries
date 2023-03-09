@@ -22,6 +22,8 @@ const fetch = require("node-fetch")
 
 const logger = require('./logger')
 
+const { resources }  = require('../../assets/js/vp-index')
+
 module.exports.handleFetchErrors = (fetchResponse) => {
     try {
       if (!fetchResponse.ok) {
@@ -34,6 +36,30 @@ module.exports.handleFetchErrors = (fetchResponse) => {
       console.error("Error in handleFetchErrors(): ", exception);
     }
 }
+
+module.exports.convertResourceResponsesToArray = (resource) => {
+  if (resource.resourceResponses.constructor.name !== "Array") {
+    resource.resourceResponses = [resource.resourceResponses]
+  }
+  return resource
+}
+
+module.exports.numberToRandomRange = (num, plusMinusPercent) => {
+  const min = Math.round(num - num * getPercentageUpTo(plusMinusPercent))
+  const max = Math.round(num + num * getPercentageUpTo(plusMinusPercent))
+  return min + '-' + max
+}
+
+const getPercentageUpTo = (percentage) => {
+  return Math.floor(Math.random() * percentage) / 100
+};
+
+const convertObjectToArray = (obj) => {
+  if (obj.constructor.name !== "Array") {
+    return [obj]
+  }
+  return obj
+};
 
 module.exports.extractOrphacode = (str) => {
   try {
@@ -48,29 +74,31 @@ module.exports.extractOrphacode = (str) => {
 }
 
 module.exports.getSources = async () => {
-  try {
-    return new Promise(async (resolve, reject) => {
-      await fetch(`${process.env.RESOURCE_INDEX_URL}/catalogues`)
-      .then(this.handleFetchErrors)
-      .then(async (fetchResponse) => {
-        if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
-          const data = await fetchResponse.json()
-          resolve(data)
-        }
-        else {
-          resolve(null)
-        }
-      })
-      .catch((exception) => {
-        reject(exception)
-        logger.error("Error in getSources():fetch(): ", exception)
-        console.error("Error in getSources():fetch(): ", exception)
-      })
-    }) 
-  } catch (exception) {
-    logger.error("Error in getSources(): ", exception)
-    console.error("Error in getSources(): ", exception)
-  }
+  // return the static resources array because the VP-INDEX is not working.
+  return resources;
+  // try {
+  //   return new Promise(async (resolve, reject) => {
+  //     await fetch(`${process.env.RESOURCE_INDEX_URL}/catalogues`)
+  //     .then(this.handleFetchErrors)
+  //     .then(async (fetchResponse) => {
+  //       if (fetchResponse.status >= 200 && fetchResponse.status < 400) {
+  //         const data = await fetchResponse.json()
+  //         resolve(data)
+  //       }
+  //       else {
+  //         resolve(null)
+  //       }
+  //     })
+  //     .catch((exception) => {
+  //       reject(exception)
+  //       logger.error("Error in getSources():fetch(): ", exception)
+  //       console.error("Error in getSources():fetch(): ", exception)
+  //     })
+  //   })
+  // } catch (exception) {
+  //   logger.error("Error in getSources(): ", exception)
+  //   console.error("Error in getSources(): ", exception)
+  // }
 }
 
 module.exports.extractQueryParameters = (request) => {
@@ -80,28 +108,32 @@ module.exports.extractQueryParameters = (request) => {
       token: undefined,
       selectedTypes: [],
       selectedCountries: [],
-      gender: '',
-      minAge: '',
-      maxAge: ''
+      gender: ''
     }
     parameters.diseaseCode = request.query.disease
     if(request.query.token) {
       parameters.token = request.query.token
     }
     if(request.query.types) {
-      parameters.selectedTypes = JSON.parse(request.query.types)
+      parameters.selectedTypes = convertObjectToArray(request.query.types)
     }
     if(request.query.countries) {
-      parameters.selectedCountries = JSON.parse(request.query.countries)
+      parameters.selectedCountries = convertObjectToArray(request.query.countries)
     }
     if(request.query.genders) {
-      parameters.gender = request.query.genders
+      parameters.gender = convertObjectToArray(request.query.genders)
     }
-    if(request.query.minAge){
-      parameters.minAge = request.query.minAge
+    if(request.query.ageThisYear){
+      parameters.ageThisYear = convertObjectToArray(request.query.ageThisYear)
     }
-    if(request.query.maxAge){
-      parameters.maxAge = request.query.maxAge
+    if(request.query.symptomOnset){
+      parameters.symptomOnset = convertObjectToArray(request.query.symptomOnset)
+    }
+    if(request.query.ageAtDiagnoses){
+      parameters.ageAtDiagnoses = convertObjectToArray(request.query.ageAtDiagnoses)
+    }
+    if(request.query.hierarchy){
+      parameters.hierarchy = convertObjectToArray(request.query.hierarchy)
     }
     return parameters
   } catch(exception) {

@@ -17,8 +17,12 @@
 */
 
 "use strict"
-
+const executeHierarchyQuery = require('./queries').executeHierarchyQuery
 const logger = require('./logger')
+const GENDER_ID = 'NCIT_C28421'
+const AGE_THIS_YEAR_ID = 'NCIT_C83164'
+const SYMPTOM_ONSET_ID = 'NCIT_C124353'
+const AGE_AT_DIAGNOSIS = 'NCIT_C156420'
 
 module.exports.buildCatalogueQuery = (address, searchTerm, types, countries) => {
     try {
@@ -39,207 +43,64 @@ module.exports.buildCatalogueQuery = (address, searchTerm, types, countries) => 
     }
 }
 
-function gendersInString(gendersstring){
-    gendersstring = gendersstring.replace("female", "NCIT_C16576");
-    gendersstring = gendersstring.replace("male", "NCIT_C20197");
-    gendersstring = gendersstring.replace("undetermined", "NCIT_C124294");
-    gendersstring = gendersstring.replace("unknown", "NCIT_C17998");
-    return gendersstring;
-}
-
-module.exports.buildIndividualsBody = (filters) => {
-    try {
-
-        console.log("JSON.stringify(filters)");
-        console.log(JSON.stringify(filters.genders));
-
-        let countFilters = Object.keys(filters).length;
-        let body = '{"meta": { "apiVersion": "v2.0"},';
-
-        body += '"query":{"filters":[';
-
-        //TODO: change ' to " in the filters
-   /*     for (let f in filters){
-            f.replace("'",'"');
-        }
-*/
-        let genderCount = filters.genders.length;
-        if(filters.ageThisYear == "") countFilters--;
-        if(filters.ageAtDiagnosis == "") countFilters--;
-        if(filters.symptomOnset == "") countFilters--;
-        if (filters.genders != null ) {
-            if(filters.genders.includes("female") && filters.genders.includes("male") && filters.genders.includes("undetermined") && filters.genders.includes("undetermined")){
-                countFilters--;
-                console.log("all genders "+ JSON.stringify(filters.genders));
-            }else {
-                if (filters.genders.includes("female")) {
-                    body += '{"id": "NCIT_C28421","operator": "=","value": "' + this.gendersInString("female") + '"}';
-                    genderCount--;
-                    if (genderCount > 1) {
-                        body += ",";
-                    }
-                }
-                if (filters.genders.includes("male")) {
-                    body += '{"id": "NCIT_C28421","operator": "=","value": "' + this.gendersInString("male") + '"}';
-                    genderCount--;
-                    if (genderCount > 1) {
-                        body += ",";
-                    }
-                }
-                if (filters.genders.includes("undetermined")) {
-                    body += '{"id": "NCIT_C28421","operator": "=","value": "' + this.gendersInString("undetermined") + '"}';
-                    genderCount--;
-                    if (genderCount > 1) {
-                        body += ",";
-                    }
-                }
-                if (filters.genders.includes("unknown")) {
-                    body += '{"id": "NCIT_C28421","operator": "=","value": "' + this.gendersInString("unknown") + '"}';
-                    genderCount--;
-                    if (genderCount > 1) {
-                        body += ",";
-                    }
-                }
-                countFilters--;
-            }
-
-            console.log("BODY GENDER: "+body)
-
-        } if (filters.disease != null) {
-            let disCode = ""
-            for(let i = 0; i <= filters.disease.length; i++){
-                if((filters.disease[i]==",") || (i == filters.disease.length)){
-                    body += '{"id": "Orphanet_' + disCode+ '"}';
-                    disCode = "";
-                    if(filters.disease[i]==",") {
-                        body += ",";
-                    }
-                }else{
-                    disCode += filters.disease[i];
-                }
-            }
-            countFilters--;
-            if(countFilters > 1){
-                body += ",";
-            }
-            console.log("BODY disease: "+body)
-        } if (filters.phenotype != null) {
-            body += '{"id": "HP_'
-            for (let i = 0; i < filters.phenotype.length; i++) {
-                body += filters.phenotype[i];
-            }
-            body += '"}';
-            countFilters--;
-            if(countFilters > 1){
-                body += ",";
-            }
-        } if (filters.genes != null) {
-            body += '{"id": "data_2295","operator": "=","value": "'
-            for (let i = 0; i < filters.genes.length; i++) {
-                body += filters.genes[i];
-            }
-            body += '"}';
-            countFilters--;
-            if(countFilters > 1){
-                body += ",";
-            }
-        } if (filters.ageThisYear != "") {
-            if(filters.ageThisYear.length > 0){
-                body += '{"id": "NCIT_C83164","operator": ">=","value": "';
-                let i = 0;
-                while(  filters.ageThisYear[i] != ",") {
-                    body += filters.ageThisYear[i]
-                }
-                body += '"}';
-                body += '{"id": "NCIT_C83164","operator": ">=","value": "';
-                while(i < filters.ageThisYear.length){
-                    body += filters.ageThisYear[i]
-                }
-                body += '"}';
-            }else{
-                body += '{"id": "NCIT_C83164","operator": "=","value": "';
-                for (let i = 0; i < filters.ageThisYear.length; i++){
-                    body += filters.ageThisYear[i]
-                }
-            }
-            body += '"}';
-            countFilters--;
-            if(countFilters > 1){
-                body += ",";
-            }
-            console.log("BODY ageThisyear: "+body)
-        } else if(filters.symptomOnset != ""){  //symptomOnset
-            if(filters.symptomOnset.length > 0){
-                body += '{"id": "NCIT_C124353","operator": ">=","value": "';
-                let i = 0;
-                while(  filters.symptomOnset[i] != ",") {
-                    body += filters.symptomOnset[i]
-                }
-                body += '"}';
-                body += '{"id": "NCIT_C124353","operator": ">=","value": "';
-                while(i < filters.symptomOnset.length){
-                    body += filters.symptomOnset[i]
-                }
-                body += '"}';
-            }else {
-                body += '{"id": "NCIT_C124353","operator": "=","value": "'
-                for (let i = 0; i < filters.symptomOnset.length; i++) {
-                    body += filters.symptomOnset[i];
-                }
-                body += '"}';
-            }
-            countFilters--;
-            if(countFilters > 1){
-                body += ",";
-            }
-        } if (filters.ageAtDiagnosis != "") {
-
-            if(filters.ageAtDiagnosis.length > 0){
-                body += '{"id": "NCIT_C156420","operator": ">=","value": "';
-                let i = 0;
-                while(  filters.ageAtDiagnosis[i] != ",") {
-                    body += filters.ageAtDiagnosis[i]
-                }
-                body += '"}';
-                body += '{"id": "NCIT_C156420","operator": ">=","value": "';
-                while(i < filters.ageAtDiagnosis.length){
-                    body += filters.ageAtDiagnosis[i]
-                }
-                body += '"}';
-            }else {
-                body += '{"id": "NCIT_C156420","operator": "=","value": "'
-                for (let i = 0; i < filters.ageAtDiagnosis.length; i++) {
-                    body += filters.ageAtDiagnosis[i];
-                    //            console.log("filters Age at Diagnosis FOR Schleife "+filters.ageAtDiagnosis)
-                }
-                body += '"}';
-            }
-            countFilters--;
-            if(countFilters > 1){
-                body += ",";
-            }
-            /* }else if(filters.availableMatrials != null){
-                 for(let i = 0; i < filters.disease.length; i++) {
-                     body += '{"id": "Available Materials","operator": "=","value": "'+ filters.availableMatrials[i]+ '"}';
-                 }
-             }else if(filters.id != null){
-                 body +='{"id": "id","operator": "=","value": "'+filters.id+'"}';
-             }else if(filters.name != null){
-                 body +='{"id": "name","operator": "=","value": "'+filters.name+'"}';
-             }else if(filters.description != null){
-                 body +='{"id": "description","operator": "=","value": "'+filters.description+'"}';
-             }else if(filters.organisation != null){
-                 body +='{"id": "organisation","operator": "=","value": "'+filters.organisation+'"}';
-             }else if(filters.resourceType != null){
-                 body +='{"id": "resourceType","operator": "=","value": "'+filters.resourceType+'"}';
-             }*/
-        }
-        body += ']}}'
-        console.log("BODY "+body)
-        return body;
-    }catch (exception) {
-        console.error("Error in portal.js:buildVivifyNetworkQuery(): ", exception);
+const genderToGenderId = (gender) => {
+    if (gender === 'female') {
+        return 'NCIT_C16576'
+    } else if (gender === 'male') {
+        return 'NCIT_C20197'
+    } else if (gender === 'undetermined') {
+        return 'NCIT_C124294'
+    } else if (gender === 'unknown') {
+        return 'NCIT_C17998'
     }
+    return '';
+};
+
+module.exports.buildIndividualsBody = async (filters) => {
+    let body = {meta: {apiVersion: "v2.0"}, query: {filters: []}}
+    if (filters.gender && filters.gender.length > 0 && filters.gender.length !== 4) {
+        for (let gen of filters.gender) {
+            body.query.filters.push({id: GENDER_ID, operator: '=', value: genderToGenderId(gen)})
+        }
+    }
+    let diseaseCodes = []
+    if (filters.diseaseCode) {
+        if (filters.hierarchy) {
+            if (filters.hierarchy.includes('up')) {
+                const orphaCodesUp = await executeHierarchyQuery(filters.diseaseCode, 'up')
+                if (orphaCodesUp) {
+                    diseaseCodes.push(...orphaCodesUp);
+                }
+            }
+            if (filters.hierarchy.includes('down')) {
+                const orphaCodesdown = await executeHierarchyQuery(filters.diseaseCode, 'down')
+                if (orphaCodesdown) {
+                    diseaseCodes.push(...orphaCodesdown);
+                }
+            }
+            diseaseCodes.push('Orphanet_' + filters.diseaseCode)
+            body.query.filters.push({id: diseaseCodes})
+        }
+        body.query.filters.push({id: 'Orphanet_' + filters.diseaseCode})
+    }
+    if (filters.phenotype) {
+    }  // TODO
+    if (filters.genes) {
+    } // TODO
+    if (filters.ageThisYear) {
+        body.query.filters.push({id: AGE_THIS_YEAR_ID, operator: '>=', value: filters.ageThisYear[0]})
+        body.query.filters.push({id: AGE_THIS_YEAR_ID, operator: '<=', value: filters.ageThisYear[1]})
+    }
+    if (filters.symptomOnset) {
+        body.query.filters.push({id: SYMPTOM_ONSET_ID, operator: '>=', value: filters.symptomOnset[0]})
+        body.query.filters.push({id: SYMPTOM_ONSET_ID, operator: '<=', value: filters.symptomOnset[1]})
+    }
+    if (filters.ageAtDiagnoses) {
+        body.query.filters.push({id: AGE_AT_DIAGNOSIS, operator: '>=', value: filters.ageAtDiagnoses[0]})
+        body.query.filters.push({id: AGE_AT_DIAGNOSIS, operator: '<=', value: filters.ageAtDiagnoses[1]})
+    }
+    if (filters.availableMatrials) {} // TODO
+    return body
 }
 
 

@@ -56,8 +56,8 @@ app.use('/api', rateLimit({
 
 app.use("/health", require('./routes/health'))
 app.use("/api", require('./routes/api'))
+app.use("/api/v1/resources", require('./routes/resources'))
 app.use("/api/v1/search", require('./routes/apiV1Search'))
-app.use("/api/v1/individuals", require('./routes/individuals'))
 app.use("/classification", require('./routes/classification'))
 app.use("/map", require('./routes/map'))
 app.use("/genes", require('./routes/genes'))
