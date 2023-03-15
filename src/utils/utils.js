@@ -104,13 +104,13 @@ module.exports.getSources = async () => {
 module.exports.extractQueryParameters = (request) => {
   try {
     let parameters = {
-      diseaseCode: '',
+      diseaseCodes: [],
       token: undefined,
       selectedTypes: [],
       selectedCountries: [],
       gender: ''
     }
-    parameters.diseaseCode = request.query.disease
+    parameters.diseaseCode = request.query.diseases
     if(request.query.token) {
       parameters.token = request.query.token
     }

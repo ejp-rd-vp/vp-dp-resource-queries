@@ -26,8 +26,7 @@ const resources = [
         "eMail": "",
         "resourceDescription": "The BBMRI-Eric catalogue of rare disease registries and biobanks.",
         "resourceType": [
-            "patientRegistry",
-            "biobank"
+            "catalogue"
         ],
         "_id": "770500610",
         "created": "2020-12-02T10:42:09.170Z",
@@ -47,8 +46,7 @@ const resources = [
         "eMail": "",
         "resourceDescription": "The Orphanet catalogue of rare disease registries and biobanks.",
         "resourceType": [
-            "patientRegistry",
-            "biobank"
+            "catalogue"
         ],
         "_id": "981801632",
         "created": "2020-10-26T15:26:15.891Z",

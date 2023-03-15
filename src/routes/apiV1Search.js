@@ -44,7 +44,7 @@ const withTimeout = (millis, promise) => {
 };
 router.get("/", async (request, response) => {
   try {
-    if(request.query.disease) {
+    if(request.query.diseases && request.query.diseases.length > 0) {
       let sources = []
       if(!request.query.source) {
         sources = await getSources()

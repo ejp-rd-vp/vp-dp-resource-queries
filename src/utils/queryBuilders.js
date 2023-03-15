@@ -24,9 +24,12 @@ const AGE_THIS_YEAR_ID = 'NCIT_C83164'
 const SYMPTOM_ONSET_ID = 'NCIT_C124353'
 const AGE_AT_DIAGNOSIS = 'NCIT_C156420'
 
-module.exports.buildCatalogueQuery = (address, searchTerm, types, countries) => {
+module.exports.buildCatalogueQuery = (address, searchTerms, types, countries) => {
     try {
-        let query = `${address}resource/search?code=http://www.orpha.net/ORDO/Orphanet_${searchTerm}`
+        let query = `${address}resource/search?code=http://www.orpha.net/ORDO/Orphanet_${searchTerms[0]}`
+        for(let searchTerm of searchTerms) {
+            query+= `&code=http://www.orpha.net/ORDO/Orphanet_${searchTerm}`;
+        }
         for(let type of types) {
             if(type == "KnowledgeDataset") {
                 continue
