@@ -23,32 +23,38 @@ const fetch = require("node-fetch")
 const logger = require('./logger')
 
 const { resources }  = require('../../assets/js/vp-index')
+const { executeHierarchyQuery } = require("./queries/hierarchyQueries");
 
-module.exports.handleFetchErrors = (fetchResponse) => {
-    try {
-      if (!fetchResponse.ok) {
-        logger.error("Fetch Error: " + fetchResponse.status + " " + fetchResponse.statusText + " for " + fetchResponse.url)
-        console.error("Fetch Error: " + fetchResponse.status + " " + fetchResponse.statusText + " for " + fetchResponse.url);
-      }
-      return fetchResponse;
-    } catch (exception) {
-      logger.error("Error in handleFetchErrors(): ", exception)
-      console.error("Error in handleFetchErrors(): ", exception);
-    }
-}
 
-module.exports.convertResourceResponsesToArray = (resource) => {
+const convertResourceResponsesToArray = (resource) => {
+  console.log('resource');
+  console.log(resource);
   if (resource.resourceResponses.constructor.name !== "Array") {
     resource.resourceResponses = [resource.resourceResponses]
   }
   return resource
-}
+};
 
-module.exports.numberToRandomRange = (num, plusMinusPercent) => {
-  const min = Math.round(num - num * getPercentageUpTo(plusMinusPercent))
-  const max = Math.round(num + num * getPercentageUpTo(plusMinusPercent))
-  return min + '-' + max
-}
+const filterResourceTypes = (allResources, expectedResourceTypes) => {
+  return allResources.filter(resource => {
+    if (expectedResourceTypes.some(r =>
+        resource.resourceType.indexOf(convertResourceTypeSyntax(r)) > -1)
+        || resource.resourceType.indexOf('catalogue') > -1) {
+      return resource
+    }
+  })
+};
+
+const convertResourceTypeSyntax = (resourceType) => {
+  if (resourceType === 'PatientRegistryDataset') {
+    return 'patientRegistry'
+  } else if (resourceType === 'BiobankDataset') {
+    return 'bioBank'
+  } else if (resourceType === 'KnowledgeDataset') {
+    return 'knowledgeBase'
+  }
+  return null;
+};
 
 const getPercentageUpTo = (percentage) => {
   return Math.floor(Math.random() * percentage) / 100
@@ -61,7 +67,7 @@ const convertObjectToArray = (obj) => {
   return obj
 };
 
-module.exports.extractOrphacode = (str) => {
+const extractOrphacode = (str) => {
   try {
     let number = str.match(/\d/g);
     if(number == null)
@@ -73,7 +79,7 @@ module.exports.extractOrphacode = (str) => {
   }
 }
 
-module.exports.getSources = async () => {
+const getSources = async () => {
   // return the static resources array because the VP-INDEX is not working.
   return resources;
   // try {
@@ -101,48 +107,79 @@ module.exports.getSources = async () => {
   // }
 }
 
-module.exports.extractQueryParameters = (request) => {
+const withTimeout = (millis, promise) => {
+  const timeout = new Promise((resolve, reject) =>
+      setTimeout(
+          () => resolve(null),
+          millis));
+  return Promise.race([
+    promise,
+    timeout
+  ]);
+};
+
+const extractQueryParameters = async (request) => {
   try {
     let parameters = {
       diseaseCodes: [],
       token: undefined,
       selectedTypes: [],
       selectedCountries: [],
-      gender: ''
+      gender: []
     }
-    parameters.diseaseCode = request.query.diseases
-    if(request.query.token) {
-      parameters.token = request.query.token
-    }
-    if(request.query.types) {
-      parameters.selectedTypes = convertObjectToArray(request.query.types)
-    }
-    if(request.query.countries) {
-      parameters.selectedCountries = convertObjectToArray(request.query.countries)
-    }
-    if(request.query.genders) {
-      parameters.gender = convertObjectToArray(request.query.genders)
-    }
-    if(request.query.ageThisYear){
-      parameters.ageThisYear = convertObjectToArray(request.query.ageThisYear)
-    }
-    if(request.query.symptomOnset){
-      parameters.symptomOnset = convertObjectToArray(request.query.symptomOnset)
-    }
-    if(request.query.ageAtDiagnoses){
-      parameters.ageAtDiagnoses = convertObjectToArray(request.query.ageAtDiagnoses)
-    }
-    if(request.query.hierarchy){
+    if (request.query.hierarchy) {
       parameters.hierarchy = convertObjectToArray(request.query.hierarchy)
     }
+    if (request.query.diseases) {
+      parameters.diseaseCodes = convertObjectToArray(request.query.diseases)
+      let hierarchyCodes = []
+      for (let diseaseCode of parameters.diseaseCodes) {
+        if (parameters.hierarchy.includes('up')) {
+          const orphaCodesUp = await withTimeout(3000, executeHierarchyQuery(diseaseCode, 'up'))
+          if (orphaCodesUp) {
+            hierarchyCodes.push(...orphaCodesUp);
+          }
+        }
+        if (parameters.hierarchy.includes('down')) {
+          const orphaCodesdown = await withTimeout(3000, executeHierarchyQuery(diseaseCode, 'down'))
+          if (orphaCodesdown) {
+            hierarchyCodes.push(...orphaCodesdown);
+          }
+        }
+      }
+      parameters.diseaseCodes.push(...hierarchyCodes)
+      parameters.diseaseCodes = parameters.diseaseCodes.map(code => 'Orphanet_' + code)
+      if (parameters.diseaseCodes.length > 4) parameters.diseaseCodes.length = 4; // TODO remove this line
+    }
+    if (request.query.token) {
+      parameters.token = request.query.token
+    }
+    if (request.query.types) {
+      parameters.selectedTypes = convertObjectToArray(request.query.types)
+    }
+    if (request.query.countries) {
+      parameters.selectedCountries = convertObjectToArray(request.query.countries)
+    }
+    if (request.query.genders) {
+      parameters.gender = convertObjectToArray(request.query.genders)
+    }
+    if (request.query.ageThisYear) {
+      parameters.ageThisYear = convertObjectToArray(request.query.ageThisYear)
+    }
+    if (request.query.symptomOnset) {
+      parameters.symptomOnset = convertObjectToArray(request.query.symptomOnset)
+    }
+    if (request.query.ageAtDiagnoses) {
+      parameters.ageAtDiagnoses = convertObjectToArray(request.query.ageAtDiagnoses)
+    }
     return parameters
-  } catch(exception) {
+  } catch (exception) {
     logger.error("Error extractQueryParameters(): ", exception)
     console.error("Error extractQueryParameters(): ", exception)
   }
 }
 
-module.exports.normalizePort = (val) => {
+const normalizePort = (val) => {
   try {
     const port = parseInt(val, 10)
     if (isNaN(port)) {
@@ -157,3 +194,5 @@ module.exports.normalizePort = (val) => {
     console.error("Error normalizePort(): ", exception);
   }
 }
+
+module.exports = { withTimeout, convertResourceResponsesToArray, normalizePort, extractQueryParameters, getSources, extractOrphacode, filterResourceTypes }

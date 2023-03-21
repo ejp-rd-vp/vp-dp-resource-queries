@@ -17,7 +17,7 @@
 */
 
 "use strict"
-const executeHierarchyQuery = require('./queries').executeHierarchyQuery
+const { executeHierarchyQuery } = require('./queries/hierarchyQueries')
 const logger = require('./logger')
 const GENDER_ID = 'NCIT_C28421'
 const AGE_THIS_YEAR_ID = 'NCIT_C83164'
@@ -26,9 +26,9 @@ const AGE_AT_DIAGNOSIS = 'NCIT_C156420'
 
 module.exports.buildCatalogueQuery = (address, searchTerms, types, countries) => {
     try {
-        let query = `${address}resource/search?code=http://www.orpha.net/ORDO/Orphanet_${searchTerms[0]}`
+        let query = `${address}resource/search?code=http://www.orpha.net/ORDO/${searchTerms[0]}`
         for(let searchTerm of searchTerms) {
-            query+= `&code=http://www.orpha.net/ORDO/Orphanet_${searchTerm}`;
+            query+= `&code=http://www.orpha.net/ORDO/${searchTerm}`;
         }
         for(let type of types) {
             if(type == "KnowledgeDataset") {
@@ -67,24 +67,8 @@ module.exports.buildIndividualsBody = async (filters) => {
         }
     }
     let diseaseCodes = []
-    if (filters.diseaseCode) {
-        if (filters.hierarchy) {
-            if (filters.hierarchy.includes('up')) {
-                const orphaCodesUp = await executeHierarchyQuery(filters.diseaseCode, 'up')
-                if (orphaCodesUp) {
-                    diseaseCodes.push(...orphaCodesUp);
-                }
-            }
-            if (filters.hierarchy.includes('down')) {
-                const orphaCodesdown = await executeHierarchyQuery(filters.diseaseCode, 'down')
-                if (orphaCodesdown) {
-                    diseaseCodes.push(...orphaCodesdown);
-                }
-            }
-            diseaseCodes.push('Orphanet_' + filters.diseaseCode)
-            body.query.filters.push({id: diseaseCodes})
-        }
-        body.query.filters.push({id: 'Orphanet_' + filters.diseaseCode})
+    if (filters.diseaseCodes) {
+        body.query.filters.push({id: diseaseCodes})
     }
     if (filters.phenotype) {
     }  // TODO

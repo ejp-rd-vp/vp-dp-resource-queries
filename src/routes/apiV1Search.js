@@ -22,26 +22,18 @@ const express = require("express")
 
 const logger = require('../utils/logger')
 const {buildIndividualsBody} = require("../utils/queryBuilders");
-const {executeIndividualsQuery} = require("../utils/queries");
+const { executeIndividualsQuery } = require("../utils/queries/individualsQueries");
 const getSources = require('../utils/utils').getSources
 const extractQueryParameters = require('../utils/utils').extractQueryParameters
+const withTimeout = require('../utils/utils').withTimeout
+const filterResourceTypes = require('../utils/utils').filterResourceTypes
 const buildCatalogueQuery = require('../utils/queryBuilders').buildCatalogueQuery
-const executeCatalogueQuery = require('../utils/queries').executeCatalogueQuery
-const executeKnowledgeBaseQuery = require('../utils/queries').executeKnowledgeBaseQuery
+const executeCatalogueQuery = require('../utils/queries/catalogueQueries').executeCatalogueQuery
+const executeKnowledgeBaseQuery = require('../utils/queries/knowledgeBaseQueries').executeKnowledgeBaseQuery
 
 const router = express.Router()
 
 const TIMEOUT = 3000
-const withTimeout = (millis, promise) => {
-  const timeout = new Promise((resolve, reject) =>
-      setTimeout(
-          () => resolve(null),
-          millis));
-  return Promise.race([
-    promise,
-    timeout
-  ]);
-};
 router.get("/", async (request, response) => {
   try {
     if(request.query.diseases && request.query.diseases.length > 0) {
@@ -49,12 +41,12 @@ router.get("/", async (request, response) => {
       if(!request.query.source) {
         sources = await getSources()
       } else {
-        sources.push(JSON.parse(request.query.source))
+        sources.push(request.query.source)
       }
-      const parameters = extractQueryParameters(request)
+      const parameters = await extractQueryParameters(request)
       let dataToBeReturned = []
       let queryResult = null
-
+      sources = filterResourceTypes(sources, parameters.selectedTypes)
       for(let source of sources) {
         if (source.queryType.includes('individuals')) {
           const body = await withTimeout(TIMEOUT, buildIndividualsBody(parameters));
@@ -63,11 +55,17 @@ router.get("/", async (request, response) => {
           }
         } else if (source.queryType.includes('search.Catalogue')) {
           const query = buildCatalogueQuery(source.resourceAddress,
-              parameters.diseaseCode, parameters.selectedTypes, parameters.selectedCountries)
+              parameters.diseaseCodes, parameters.selectedTypes, parameters.selectedCountries)
           queryResult = await withTimeout(TIMEOUT, executeCatalogueQuery(source, query))
         } else if (source.queryType.includes('search.Knowledge')) {
-          const query = `${source.resourceAddress}?code=http://www.orpha.net/ORDO/Orphanet_${parameters.diseaseCode}`
-          queryResult = await withTimeout(TIMEOUT, executeKnowledgeBaseQuery(source, query))
+          for (let diseaseCode of parameters.diseaseCodes) {
+            const query = `${source.resourceAddress}?code=http://www.orpha.net/ORDO/${parameters.diseaseCodes}`
+            queryResult = await withTimeout(TIMEOUT, executeKnowledgeBaseQuery(source, query))
+            if (queryResult) {
+              dataToBeReturned.push(queryResult)
+            }
+          }
+          continue
         } else {
           logger.warn(`Entering default switch of route /api/v1/search for ${source.resourceName}`)
         }
