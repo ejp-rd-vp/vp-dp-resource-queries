@@ -57,6 +57,7 @@ app.use('/api', rateLimit({
 app.use("/api", require('./routes/api'))
 app.use("/api/v1/resources", require('./routes/resources'))
 app.use("/api/v1/search", require('./routes/apiV1Search'))
+app.use("/api/v1/hierarchy", require('./routes/hierarchy'))
 
 module.exports = app
 

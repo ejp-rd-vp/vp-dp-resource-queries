@@ -132,24 +132,7 @@ const extractQueryParameters = async (request) => {
     }
     if (request.query.diseases) {
       parameters.diseaseCodes = convertObjectToArray(request.query.diseases)
-      let hierarchyCodes = []
-      for (let diseaseCode of parameters.diseaseCodes) {
-        if (parameters.hierarchy.includes('up')) {
-          const orphaCodesUp = await withTimeout(3000, executeHierarchyQuery(diseaseCode, 'up'))
-          if (orphaCodesUp) {
-            hierarchyCodes.push(...orphaCodesUp);
-          }
-        }
-        if (parameters.hierarchy.includes('down')) {
-          const orphaCodesdown = await withTimeout(3000, executeHierarchyQuery(diseaseCode, 'down'))
-          if (orphaCodesdown) {
-            hierarchyCodes.push(...orphaCodesdown);
-          }
-        }
-      }
-      parameters.diseaseCodes.push(...hierarchyCodes)
       parameters.diseaseCodes = parameters.diseaseCodes.map(code => 'Orphanet_' + code)
-      if (parameters.diseaseCodes.length > 4) parameters.diseaseCodes.length = 4; // TODO remove this line
     }
     if (request.query.token) {
       parameters.token = request.query.token
@@ -195,4 +178,4 @@ const normalizePort = (val) => {
   }
 }
 
-module.exports = { withTimeout, convertResourceResponsesToArray, normalizePort, extractQueryParameters, getSources, extractOrphacode, filterResourceTypes }
+module.exports = { withTimeout, convertResourceResponsesToArray, normalizePort, extractQueryParameters, getSources, extractOrphacode, filterResourceTypes, convertObjectToArray }

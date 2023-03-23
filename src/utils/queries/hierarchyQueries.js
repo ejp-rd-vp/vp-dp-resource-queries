@@ -3,9 +3,10 @@
 const fetch = require("node-fetch");
 const { handleFetchErrors } = require("../handler/errorsHandler");
 const logger = require("../logger");
-const executeHierarchyQuery = (code, way) => {
+const executeHierarchyQuery = (code, way, levels) => {
     try {
         const query = 'http://155.133.131.171:8080/ClassifTraversal/hierarchies/traverse?code=' + code + '&way=' + way
+        levels = levels.map(level => parseInt(level))
         return new Promise(async (resolve, reject) => {
             await fetch(query, {
                 headers: {
@@ -19,15 +20,23 @@ const executeHierarchyQuery = (code, way) => {
                         let orphaCodes = []
                         if (way.toLowerCase() === 'up') {
                             for (let parent of contentTemp.parents) {
-                                for (let parentParent of parent.parents) {
-                                    orphaCodes.push(parentParent.code)
+                                if (parent.level >= levels[0] && parent.level <= levels[1]) {
+                                    for (let parentParent of parent.parents) {
+                                        parentParent.level = parent.level
+                                        parentParent.way = 'up'
+                                        orphaCodes.push(parentParent)
+                                    }
                                 }
                             }
                         }
                         if (way.toLowerCase() === 'down') {
                             for (let child of contentTemp.childs) {
-                                for (let childChild of child.childs) {
-                                    orphaCodes.push(childChild.code)
+                                if (child.level >= levels[0] && child.level <= levels[1]) {
+                                    for (let childChild of child.childs) {
+                                        childChild.level = child.level
+                                        childChild.way = 'down'
+                                        orphaCodes.push(childChild)
+                                    }
                                 }
                             }
                         }
