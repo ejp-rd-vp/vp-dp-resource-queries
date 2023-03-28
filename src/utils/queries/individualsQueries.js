@@ -8,7 +8,7 @@ const executeIndividualsQuery = (source, individualsBody) => {
             await fetch(`${source.resourceAddress}`, {
                 method: 'post',
                 headers: {'Accept': 'application/json', 'auth-key': authKey},
-                body: individualsBody
+                body: JSON.stringify(individualsBody)
             })
                 .then(handleFetchErrors)
                 .then(async (fetchResponse) => {
