@@ -19,7 +19,7 @@
 "use strict"
 
 // load dependencies
-const https = require('https')
+const http = require('http')
 const fs = require('fs')
 const path = require("path")
 const dotenv = require('dotenv').config()
@@ -35,12 +35,8 @@ const app = require("../src/app")
 const port = normalizePort(process.env.RESOURCE_INTERFACE_PORT || "3006")
 app.set("port", port)
 
-var options = {
-    key: fs.readFileSync(path.join(__dirname, '..', process.env.RESOURCE_INTERFACE_SSL_KEY)),
-    cert: fs.readFileSync(path.join(__dirname, '..', process.env.RESOURCE_INTERFACE_SSL_CERT))
-  }
 
-const server = https.createServer(options, app)
+const server = http.createServer(app)
 
 /**
  * Event listener for HTTP server "error" event.
