@@ -66,9 +66,8 @@ module.exports.buildIndividualsBody = async (filters) => {
             body.query.filters.push({id: GENDER_ID, operator: '=', value: genderToGenderId(gen)})
         }
     }
-    let diseaseCodes = []
     if (filters.diseaseCodes) {
-        body.query.filters.push({id: diseaseCodes})
+        body.query.filters.push({id: filters.diseaseCodes})
     }
     if (filters.phenotype) {
     }  // TODO
