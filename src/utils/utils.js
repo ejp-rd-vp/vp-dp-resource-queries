@@ -27,8 +27,6 @@ const { executeHierarchyQuery } = require("./queries/hierarchyQueries");
 
 
 const convertResourceResponsesToArray = (resource) => {
-  console.log('resource');
-  console.log(resource);
   if (resource.resourceResponses.constructor.name !== "Array") {
     resource.resourceResponses = [resource.resourceResponses]
   }
