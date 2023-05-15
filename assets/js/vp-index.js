@@ -1,7 +1,135 @@
 const resources = [
     {
+        "resourceName": "EuRRECa",
+        "resourceAddress": "https://www448.lamp.le.ac.uk/InterERN/beaconApi/",
+        "resourceHomePage": "https://www448.lamp.le.ac.uk/e-REC/",
+        "eMail": "admin@cafevariome.org",
+        "resourceDescription": "The European Registries for Rare Endocrine Conditions.",
+        "resourceType": [
+            "patientRegistry"
+        ],
+        "_id": "437622447",
+        "created": "2021-10-14T10:12:13.898Z",
+        "updated": "2021-10-14T10:12:13.898Z",
+        "specsURL": "",
+        "logo": "",
+        "resourceContentType": "",
+        "queryable": true,
+        "queryType": ["individuals"],
+        "theme": [],
+        "DUC-CCE": {}
+    },
+    {
+        "resourceName": "CHD7",
+        "resourceAddress": "https://mutatiedatabases.molgeniscloud.org/api/beacon/individuals",
+        "resourceHomePage": "",
+        "eMail": "",
+        "resourceDescription": "",
+        "resourceType": [
+            "patientRegistry"
+        ],
+        "_id": "",
+        "created": "2021-10-13T06:25:33.898Z",
+        "updated": "2021-10-13T06:25:33.898Z",
+        "specsURL": "",
+        "logo": "",
+        "resourceContentType": "",
+        "queryable": true,
+        "queryType": ["individuals"],
+        "theme": [],
+        "DUC-CCE": {}
+    },
+    {
+        "resourceName": "Genturis",
+        "resourceAddress": "https://genturis-emx2.molgeniscloud.org/api/beacon/individuals",
+        "resourceHomePage": "",
+        "eMail": "",
+        "resourceDescription": "",
+        "resourceType": [
+            "patientRegistry"
+        ],
+        "_id": "",
+        "created": "2021-10-13T06:25:33.898Z",
+        "updated": "2021-10-13T06:25:33.898Z",
+        "specsURL": "",
+        "logo": "",
+        "resourceContentType": "",
+        "queryable": true,
+        "queryType": [
+            "individuals"
+        ],
+        "theme": [],
+        "DUC-CCE": {}
+    },
+    {
+        "resourceName": "RD-Connect GPAP",
+        "resourceAddress": "https://playground.rd-connect.eu/beacon2/api/individuals",
+        "resourceHomePage": "",
+        "eMail": "",
+        "resourceDescription": "",
+        "resourceType": [
+            "patientRegistry"
+        ],
+        "_id": "",
+        "created": "2021-10-13T06:25:33.898Z",
+        "updated": "2021-10-13T06:25:33.898Z",
+        "specsURL": "",
+        "logo": "",
+        "resourceContentType": "",
+        "queryable": true,
+        "queryType": [
+            "individuals"
+        ],
+        "theme": [],
+        "DUC-CCE": {}
+    },
+    {
+        "resourceName": "Solve-RD",
+        "resourceAddress": "https://rdnexusdev.molgeniscloud.org/cv2/BeaconAPI/individuals",
+        "resourceHomePage": "",
+        "eMail": "",
+        "resourceDescription": "",
+        "resourceType": [
+            "patientRegistry"
+        ],
+        "_id": "",
+        "created": "2021-10-13T06:25:33.898Z",
+        "updated": "2021-10-13T06:25:33.898Z",
+        "specsURL": "",
+        "logo": "",
+        "resourceContentType": "",
+        "queryable": true,
+        "queryType": [
+            "individuals"
+        ],
+        "theme": [],
+        "DUC-CCE": {}
+    },
+    {
+        "resourceName": "Ithaca",
+        "resourceAddress": "https://ithaca-emx2.molgeniscloud.org/api/beacon/individuals",
+        "resourceHomePage": "",
+        "eMail": "",
+        "resourceDescription": "",
+        "resourceType": [
+            "patientRegistry"
+        ],
+        "_id": "",
+        "created": "2021-10-13T06:25:33.898Z",
+        "updated": "2021-10-13T06:25:33.898Z",
+        "specsURL": "",
+        "logo": "",
+        "resourceContentType": "",
+        "queryable": true,
+        "queryType": [
+            "individuals"
+        ],
+        "theme": [],
+        "DUC-CCE": {}
+    },
+    {
         "resourceName": "ERKReg",
-        "resourceAddress": "https://www448.lamp.le.ac.uk/erknet/BeaconAPI/77/individuals",
+        "resourceAddress": "https://www448.lamp.le.ac.uk/erknet/BeaconAPI/83/individuals",
         "resourceHomePage": "https://qbwf.erknet.org/",
         "eMail": "admin@cafevariome.org",
         "resourceDescription": "The European Rare Kidney Disease Registry.",
@@ -96,6 +224,46 @@ const resources = [
         "resourceContentType": "",
         "queryable": true,
         "queryType": ["search.Knowledge"],
+        "theme": [],
+        "DUC-CCE": {}
+    },
+    {
+        "resourceName": "DDP",
+        "resourceAddress": "",
+        "resourceHomePage": "https://duchenne.nl/duchenne-data-platform-english/",
+        "eMail": "",
+        "resourceDescription": "The Duchenne Data Platform is a patient-led registry. Health information collected is stored in 'personal datalockers' for easy access at all times by patients through wearables or online.",
+        "resourceType": [
+            "patientRegistry"
+        ],
+        "_id": "981833444",
+        "created": "2020-11-07T05:12:55.898Z",
+        "updated": "2020-11-07T05:12:55.898Z",
+        "specsURL": "",
+        "logo": "",
+        "resourceContentType": "",
+        "queryable": false,
+        "queryType": [],
+        "theme": [],
+        "DUC-CCE": {}
+    },
+    {
+        "resourceName": "CTSR",
+        "resourceAddress": "",
+        "resourceHomePage": "https://ctsr.uniklinik-freiburg.de/",
+        "eMail": "",
+        "resourceDescription": ": The Care and Trial Site Registry (CTSR) is an online self-entry database of specialised sites seeing patients with neuromuscular and neurodegenerative diseases. It holds site-level information relevant to clinical studies and care provision, including facilities, equipment, personnel, and trial experience, as well aggregate data about their patient population. It does not hold patient-level data.",
+        "resourceType": [
+            "knowledgeBase"
+        ],
+        "_id": "981833671",
+        "created": "2020-10-26T15:26:15.898Z",
+        "updated": "2020-10-26T15:26:15.898Z",
+        "specsURL": "",
+        "logo": "",
+        "resourceContentType": "",
+        "queryable": false,
+        "queryType": [],
         "theme": [],
         "DUC-CCE": {}
     },
