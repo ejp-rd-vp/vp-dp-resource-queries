@@ -63,7 +63,7 @@ const resources = [
     },
     {
         "resourceName": "RD-Connect GPAP",
-        "resourceAddress": "https://playground.rd-connect.eu/beacon2/api/individuals",
+        "resourceAddress": "https://platform.rd-connect.eu/beacon2/api/individuals",
         "resourceHomePage": "",
         "eMail": "",
         "resourceDescription": "",
