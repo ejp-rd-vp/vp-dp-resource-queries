@@ -243,7 +243,7 @@ const resources = [
         "logo": "",
         "resourceContentType": "",
         "queryable": false,
-        "queryType": [],
+        "queryType": ["individuals"],
         "theme": [],
         "DUC-CCE": {}
     },
@@ -263,7 +263,7 @@ const resources = [
         "logo": "",
         "resourceContentType": "",
         "queryable": false,
-        "queryType": [],
+        "queryType": ["search.Knowledge"],
         "theme": [],
         "DUC-CCE": {}
     },
