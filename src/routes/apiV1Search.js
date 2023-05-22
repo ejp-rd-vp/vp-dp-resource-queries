@@ -59,7 +59,7 @@ router.get("/", async (request, response) => {
           queryResult = await withTimeout(TIMEOUT, executeCatalogueQuery(source, query))
         } else if (source.queryType.includes('search.Knowledge')) {
           for (let diseaseCode of parameters.diseaseCodes) {
-            const query = `${source.resourceAddress}?code=http://www.orpha.net/ORDO/${parameters.diseaseCodes}`
+            const query = `${source.resourceAddress}?code=http://www.orpha.net/ORDO/${diseaseCode}`
             queryResult = await withTimeout(TIMEOUT, executeKnowledgeBaseQuery(source, query))
             if (queryResult) {
               dataToBeReturned.push(queryResult)
