@@ -67,7 +67,7 @@ module.exports.buildIndividualsBody = async (filters) => {
         }
     }
     if (filters.diseaseCodes) {
-        body.query.filters.push({id: filters.diseaseCodes})
+        body.query.filters.push({id: filters.diseaseCodes.length === 1 ? filters.diseaseCodes[0] : filters.diseaseCodes})
     }
     if (filters.phenotype) {
     }  // TODO
