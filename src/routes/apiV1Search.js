@@ -62,7 +62,19 @@ router.get("/", async (request, response) => {
             const query = `${source.resourceAddress}?code=http://www.orpha.net/ORDO/${diseaseCode}`
             queryResult = await withTimeout(TIMEOUT, executeKnowledgeBaseQuery(source, query))
             if (queryResult) {
-              dataToBeReturned.push(queryResult)
+              if (dataToBeReturned.length === 0) {
+                dataToBeReturned.push(queryResult)
+              } else {
+                const previousResult = dataToBeReturned[0]
+                const finalContent = previousResult['content']
+                finalContent['resourceResponses'].push(...queryResult['content']['resourceResponses'])
+               const finalResult = {
+                 name: queryResult.name,
+                 numTotalResults: queryResult['numTotalResults'] + previousResult['numTotalResults'],
+                 content: finalContent
+               }
+                dataToBeReturned[0] = finalResult
+              }
             }
           }
           continue
