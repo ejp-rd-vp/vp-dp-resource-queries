@@ -23,10 +23,12 @@ const express = require("express")
 const logger = require('../utils/logger')
 const {buildIndividualsBody} = require("../utils/queryBuilders");
 const { executeIndividualsQuery } = require("../utils/queries/individualsQueries");
+const { userIsAuthenticated } = require("../utils/handler/authHandler");
 const getSources = require('../utils/utils').getSources
 const extractQueryParameters = require('../utils/utils').extractQueryParameters
 const withTimeout = require('../utils/utils').withTimeout
 const filterResourceTypes = require('../utils/utils').filterResourceTypes
+const deleteLevel2BFilters = require('../utils/utils').deleteLevel2BFilters
 const buildCatalogueQuery = require('../utils/queryBuilders').buildCatalogueQuery
 const executeCatalogueQuery = require('../utils/queries/catalogueQueries').executeCatalogueQuery
 const executeKnowledgeBaseQuery = require('../utils/queries/knowledgeBaseQueries').executeKnowledgeBaseQuery
@@ -36,6 +38,9 @@ const router = express.Router()
 const TIMEOUT = 3000
 router.get("/", async (request, response) => {
   try {
+    if (!await userIsAuthenticated(request.headers.authorization)) {
+      request.query = deleteLevel2BFilters(request.query)
+    }
     if(request.query.diseases && request.query.diseases.length > 0) {
       let sources = []
       if(!request.query.source) {
