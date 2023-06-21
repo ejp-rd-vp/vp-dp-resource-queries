@@ -62,7 +62,7 @@ const resources = [
         "DUC-CCE": {}
     },
     {
-        "resourceName": "RD-Connect GPAP",
+        "resourceName": "RD-Connect-GPAP",
         "resourceAddress": "https://platform.rd-connect.eu/beacon2/api/individuals",
         "resourceHomePage": "",
         "eMail": "",
