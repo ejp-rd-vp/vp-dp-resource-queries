@@ -46,8 +46,7 @@ app.use(morgan('common', {
   stream: fs.createWriteStream(path.join(__dirname, '../logs', 'access.log'), { flags: 'a' })
 }))
 app.use('/api', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: process.env.RESOURCE_INTERFACE_RATE_LIMIT
+  windowMs: 15 * 60 * 1000
 }))
 
 /**
