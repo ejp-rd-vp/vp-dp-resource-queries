@@ -135,25 +135,6 @@ const resources = [
         "theme": []
     },
     {
-        "resourceName": "Cellosaurus",
-        "resourceAddress": "https://ejp-rd-dev1.vm.cesnet.cz/grlcs/cellosaurus",
-        "resourceHomePage": "https://web.expasy.org/cellosaurus/",
-        "eMail": "",
-        "resourceDescription": "The Cellosaurus is a knowledge resource on cell lines. It attempts to describe all cell lines used in biomedical research.\n\nIts scope includes:\n1) Immortalized cell lines\n2) Naturally immortal cell lines (example: stem cell lines)\n3) Finite life cell lines when those are distributed and used widely\n4) Vertebrate cell line with an emphasis on human, mouse and rat cell lines\n5) Invertebrate (insects and ticks) cell lines\nIts scope does not include:\n1) Primary cell lines (with the exception of the finite life cell lines described above)\n2) Plant cell lines.",
-        "resourceType": [
-            "knowledgeBase"
-        ],
-        "_id": "981801637",
-        "created": "2020-10-26T15:26:15.891Z",
-        "updated": "2020-10-26T15:26:15.891Z",
-        "specsURL": "",
-        "logo": "",
-        "resourceContentType": "",
-        "queryable": true,
-        "queryType": ["search.Knowledge"],
-        "theme": []
-    },
-    {
         "resourceName": "DDP",
         "resourceAddress": "",
         "resourceHomePage": "https://duchenne.nl/duchenne-data-platform-english/",
