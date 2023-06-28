@@ -45,9 +45,6 @@ if (process.env.NODE_ENV !== "production") {
 app.use(morgan('common', {
   stream: fs.createWriteStream(path.join(__dirname, '../logs', 'access.log'), { flags: 'a' })
 }))
-app.use('/api', rateLimit({
-  windowMs: 15 * 60 * 1000
-}))
 
 /**
  * Add routes
