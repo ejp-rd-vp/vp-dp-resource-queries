@@ -1,24 +1,5 @@
 const resources = [
     {
-        "resourceName": "EuRRECa",
-        "resourceAddress": "https://www448.lamp.le.ac.uk/InterERN/beaconApi/",
-        "resourceHomePage": "https://www448.lamp.le.ac.uk/e-REC/",
-        "eMail": "admin@cafevariome.org",
-        "resourceDescription": "The European Registries for Rare Endocrine Conditions.",
-        "resourceType": [
-            "patientRegistry"
-        ],
-        "_id": "437622447",
-        "created": "2021-10-14T10:12:13.898Z",
-        "updated": "2021-10-14T10:12:13.898Z",
-        "specsURL": "",
-        "logo": "",
-        "resourceContentType": "",
-        "queryable": true,
-        "queryType": ["individuals"],
-        "theme": []
-    },
-    {
         "resourceName": "RD-Connect-GPAP",
         "resourceAddress": "https://platform.rd-connect.eu/beacon2/api/individuals",
         "resourceHomePage": "https://platform.rd-connect.eu",
@@ -32,25 +13,6 @@ const resources = [
         "updated": "2021-10-13T06:25:33.898Z",
         "specsURL": "",
         "logo": "https://statics.cnag.crg.eu/rdconnect/img/gpap_logo_new_text.svg",
-        "resourceContentType": "",
-        "queryable": true,
-        "queryType": ["individuals"],
-        "theme": []
-    },
-    {
-        "resourceName": "Solve-RD",
-        "resourceAddress": "https://rdnexusdev.molgeniscloud.org/cv2/BeaconAPI/individuals",
-        "resourceHomePage": "",
-        "eMail": "",
-        "resourceDescription": "Solve-RD - (solving the unsolved rare diseases) is a research project funded by the European Commission for five years (2018-2022). It echoes the ambitious goals set out by the International Rare Diseases Research Consortium (IRDiRC) to deliver diagnostic tests for most rare diseases by 2020. The current diagnostic and subsequent therapeutic management of rare diseases is still highly unsatisfactory for a large proportion of rare disease patients – the unsolved RD cases. For these unsolved rare diseases, we are unable to explain the etiology responsible for the disease phenotype, predict the individual disease risk and/or rate of disease progression, and/or quantitate the risk of relatives to develop the same disorder.",
-        "resourceType": [
-            "patientRegistry"
-        ],
-        "_id": "",
-        "created": "2021-10-13T06:25:33.898Z",
-        "updated": "2021-10-13T06:25:33.898Z",
-        "specsURL": "",
-        "logo": "https://solve-rd.eu/wp-content/uploads/2018/04/cropped-Solve-RD-Logo-Subtitle-300x92.png",
         "resourceContentType": "",
         "queryable": true,
         "queryType": ["individuals"],
