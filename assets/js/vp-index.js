@@ -232,10 +232,12 @@ const resources = [
     {
         "resourceName": "Registry VASCERN (VASCA)",
         "resourceAddress": "",
-        "resourceHomePage": "https://vascern.eu/what-we-do/patient-registries/",
+        "resourceHomePage": "https://vascern.eu/groupe/registry/",
         "eMail": "",
         "resourceDescription": "Databases of the ERN vascular anomalies",
-        "resourceType": [],
+        "resourceType":  [
+            "patientRegistry"
+        ],
         "_id": "",
         "created": "",
         "updated": "",
@@ -354,25 +356,24 @@ const resources = [
         "theme": []
     }, 
     {
-        "resourceName": "Registry VASCERN (VASCA)",
+        "resourceName": "Registry ERN eUROGEN",
         "resourceAddress": "",
-        "resourceHomePage": "https://vascern.eu/groupe/registry/",
+        "resourceHomePage": "https://eurogen-ern.eu/what-we-do/registry-digital-activities/aim/",
         "eMail": "",
-        "resourceDescription": "Databases of the ERN vascular anomalies",
-        "resourceType":  [
+        "resourceDescription": "Registry from ERN eUROGEN on rare uro-recto-genital diseases and complex conditions.",
+        "resourceType": [
             "patientRegistry"
         ],
         "_id": "",
         "created": "",
         "updated": "",
         "specsURL": "",
-        "logo": "https://data.castoredc.com/view-file/57051B03-59C1-23A3-3ADA-7AA791481606/image/113",
+        "logo": "https://eurogen-ern.eu/wp-content/uploads/2016/11/eUROGEN-Website-Logo.jpg",
         "resourceContentType": "",
         "queryable": false,
         "queryType": [],
-        "theme": [
-            "http://www.orpha.net/ORDO/Orphanet_306498", "http://www.orpha.net/ORDO/Orphanet_211252", "http://www.orpha.net/ORDO/Orphanet_2123", "http://www.orpha.net/ORDO/Orphanet_140944", "http://www.orpha.net/ORDO/Orphanet_464318", "http://www.orpha.net/ORDO/Orphanet_458792", "http://www.orpha.net/ORDO/Orphanet_73", "http://www.orpha.net/ORDO/Orphanet_2136", "http://www.orpha.net/ORDO/Orphanet_69735", "http://www.orpha.net/ORDO/Orphanet_744", "http://www.orpha.net/ORDO/Orphanet_2415", "http://www.orpha.net/ORDO/Orphanet_211237", "http://www.orpha.net/ORDO/Orphanet_2122", "http://www.orpha.net/ORDO/Orphanet_458785", "http://www.orpha.net/ORDO/Orphanet_137667", "http://www.orpha.net/ORDO/Orphanet_211247", "http://www.orpha.net/ORDO/Orphanet_99141", "http://www.orpha.net/ORDO/Orphanet_2451", "http://www.orpha.net/ORDO/Orphanet_75508", "http://www.orpha.net/ORDO/Orphanet_263413", "http://www.orpha.net/ORDO/Orphanet_458837", "http://www.orpha.net/ORDO/Orphanet_77240", "http://www.orpha.net/ORDO/Orphanet_458833", "http://www.orpha.net/ORDO/Orphanet_141179", "http://www.orpha.net/ORDO/Orphanet_458844", "http://www.orpha.net/ORDO/Orphanet_210584", "http://www.orpha.net/ORDO/Orphanet_83628", "http://www.orpha.net/ORDO/Orphanet_79489", "http://www.orpha.net/ORDO/Orphanet_458827", "http://www.orpha.net/ORDO/Orphanet_458775", "http://www.orpha.net/ORDO/Orphanet_42775", "http://www.orpha.net/ORDO/Orphanet_211266", "http://www.orpha.net/ORDO/Orphanet_458768", "http://www.orpha.net/ORDO/Orphanet_79452", "http://www.orpha.net/ORDO/Orphanet_211277", "http://www.orpha.net/ORDO/Orphanet_60040", "http://www.orpha.net/ORDO/Orphanet_458841", "http://www.orpha.net/ORDO/Orphanet_1556", "http://www.orpha.net/ORDO/Orphanet_2330", "http://www.orpha.net/ORDO/Orphanet_141184", "http://www.orpha.net/ORDO/Orphanet_141209", "http://www.orpha.net/ORDO/Orphanet_53721", "http://www.orpha.net/ORDO/Orphanet_168984", "http://www.orpha.net/ORDO/Orphanet_79490", "http://www.orpha.net/ORDO/Orphanet_464321", "http://www.orpha.net/ORDO/Orphanet_90307", "http://www.orpha.net/ORDO/Orphanet_294016", "http://www.orpha.net/ORDO/Orphanet_3205", "http://www.orpha.net/ORDO/Orphanet_163634", "http://www.orpha.net/ORDO/Orphanet_33001", "http://www.orpha.net/ORDO/Orphanet_459530", "http://www.orpha.net/ORDO/Orphanet_1059", "http://www.orpha.net/ORDO/Orphanet_90308", "http://www.orpha.net/ORDO/Orphanet_157791", "http://www.orpha.net/ORDO/Orphanet_33276", "http://www.orpha.net/ORDO/Orphanet_221061", "http://www.orpha.net/ORDO/Orphanet_83454", "http://www.orpha.net/ORDO/Orphanet_109", "http://www.orpha.net/ORDO/Orphanet_98731", "http://www.orpha.net/ORDO/Orphanet_774", "http://www.orpha.net/ORDO/Orphanet_210589", "http://www.orpha.net/ORDO/Orphanet_1063", "http://www.orpha.net/ORDO/Orphanet_458763", "http://purl.org/ejp-rd/vocabulary/VPDiscoverable"]
-    },
+        "theme": []
+    }
 ];
 
 exports.resources = resources;
