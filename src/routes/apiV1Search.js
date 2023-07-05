@@ -35,7 +35,7 @@ const executeKnowledgeBaseQuery = require('../utils/queries/knowledgeBaseQueries
 
 const router = express.Router()
 
-const TIMEOUT = 3000
+const TIMEOUT = 6000
 router.get("/", async (request, response) => {
   try {
     if (!await userIsAuthenticated(request.headers.authorization)) {
