@@ -21,7 +21,7 @@ const resources = [
     {
         "resourceName": "Ithaca",
         "resourceAddress": "https://ithaca-emx2.molgeniscloud.org/api/beacon/individuals",
-        "resourceHomePage": "",
+        "resourceHomePage": "https://ithaca.molgeniscloud.org/",
         "eMail": "",
         "resourceDescription": "The main objective of this WP is to set up an interoperable registry dedicated to rare diseases within the scope of ITHACA called ILIAD Rare Diseases patient registry: an International Library of Intellectual disability and Anomalies of Development.",
         "resourceType": [
@@ -40,8 +40,8 @@ const resources = [
     {
         "resourceName": "ERKReg",
         "resourceAddress": "https://www448.lamp.le.ac.uk/erknet/BeaconAPI/83/individuals",
-        "resourceHomePage": "https://qbwf.erknet.org/",
-        "eMail": "admin@cafevariome.org",
+        "resourceHomePage": "https://www.erknet.org/patients-registry/registry-mission",
+        "eMail": "contact@erknet.org",
         "resourceDescription": "The European Rare Kidney Disease Registry.",
         "resourceType": [
             "patientRegistry"
@@ -50,7 +50,7 @@ const resources = [
         "created": "2021-10-13T06:25:33.898Z",
         "updated": "2021-10-13T06:25:33.898Z",
         "specsURL": "",
-        "logo": "",
+        "logo": "https://endo-ern.eu/wp-content/uploads/2018/03/eurreca-logo-768x242.jpg",
         "resourceContentType": "",
         "queryable": true,
         "queryType": ["individuals"],
@@ -60,7 +60,7 @@ const resources = [
         "resourceName": "BBMRI-Eric",
         "resourceAddress": "http://ejprd.ref.development.bibbox.org/api/ejprd/bbmri/v3/",
         "resourceHomePage": "https://directory.bbmri-eric.eu/",
-        "eMail": "",
+        "eMail": "contact@bbmri-eric.eu",
         "resourceDescription": "The BBMRI-Eric catalogue of rare disease registries and biobanks.",
         "resourceType": [
             "patientRegistry",
@@ -156,7 +156,7 @@ const resources = [
     {
         "resourceName": "hPSCreg",
         "resourceAddress": "https://ejp-rd-dev1.vm.cesnet.cz/grlcs/hPSCreg",
-        "resourceHomePage": "https://hpscreg.eu/",
+        "resourceHomePage": "https://hpscreg.eu/about",
         "eMail": "",
         "resourceDescription": "hPSCreg is a global registry for human pluripotent stem cell lines (hPSC-lines). It aims to provide to the community\n\n1) a central and searchable hub for available hPSC-lines\n2) a central registry of clinical studies based on hPSC-lines\n3) a standardized identifier for hPSC-lines and register of these standard names\n4) a trustworthy data source for hPSC-lines by verifying the ethical and biological conformity of registered lines based on community standards\n5) comparability of quality standards in hPSC research\n6) certification of quality and ethical provenance of hPSC-lines\n7) a platform where any scientist or institution generating or working with PSC lines can register their cell lines, projects or clinical studies.",
         "resourceType": [
@@ -269,7 +269,7 @@ const resources = [
     {
         "resourceName": "Registry ERN-Skin (ERN-Skin REGISTRY)",
         "resourceAddress": "",
-        "resourceHomePage": "",
+        "resourceHomePage": "https://solve-rd.eu/",
         "eMail": "",
         "resourceDescription": "The aim of ERN-Skin is to have a central European registry for all cases of rare dermatological diseases, which will be a useful tool for clinical research, simplify the development of cohorts and answer the specific questions of each Disease Group.",
         "resourceType": [],
@@ -303,7 +303,7 @@ const resources = [
     {
         "resourceName": "Genturis",
         "resourceAddress": "https://genturis-emx2.molgeniscloud.org/api/beacon/individuals",
-        "resourceHomePage": "",
+        "resourceHomePage": "https://genturis.molgeniscloud.org/",
         "eMail": "",
         "resourceDescription": "The GENTURIS registry is the European registry for patients with one of the genetic tumour risk syndromes (genturis). The registry is affiliated to the European Reference Network for all patients with one of the genetic tumour risk syndromes (ERN GENTURIS).",
         "resourceType": [
@@ -313,7 +313,7 @@ const resources = [
         "created": "2021-10-13T06:25:33.898Z",
         "updated": "2021-10-13T06:25:33.898Z",
         "specsURL": "",
-        "logo": "",
+        "logo": "https://genturis.molgeniscloud.org/logo/genturis-registry-logo-bg-white.png",
         "resourceContentType": "",
         "queryable": true,
         "queryType": ["individuals"],
