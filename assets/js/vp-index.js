@@ -198,7 +198,7 @@ const resources = [
         "eMail": "",
         "resourceDescription": "A catalog to contain all metabolights study resources.",
         "resourceType": [
-            "DataService"
+            "knowledgeBase"
         ],
         "_id": "",
         "created": "",
@@ -255,7 +255,9 @@ const resources = [
         "resourceHomePage": "https://cranio.molgeniscloud.org/",
         "eMail": "",
         "resourceDescription": "ERN CRANIO is the European Reference Network for rare and/or complex craniofacial anomalies and ear, nose and throat (ENT) disorders. The network was officially launched in March 2017. There are 29 European hospitals involved in ERN CRANIO, from 11 EU member states. It is a multi-disciplinary network of highly specialised healthcare professionals. Patient representatives also play an active role in the network and its activities.",
-        "resourceType": [],
+        "resourceType":  [
+            "patientRegistry"
+        ],
         "_id": "",
         "created": "",
         "updated": "",
@@ -272,7 +274,9 @@ const resources = [
         "resourceHomePage": "https://solve-rd.eu/",
         "eMail": "",
         "resourceDescription": "The aim of ERN-Skin is to have a central European registry for all cases of rare dermatological diseases, which will be a useful tool for clinical research, simplify the development of cohorts and answer the specific questions of each Disease Group.",
-        "resourceType": [],
+        "resourceType":  [
+            "patientRegistry"
+        ],
         "_id": "",
         "created": "",
         "updated": "",
@@ -289,7 +293,9 @@ const resources = [
         "resourceHomePage": "",
         "eMail": "",
         "resourceDescription": "EURO-NMD is a European reference network for the thematic grouping of rare neuromuscular diseases (NMDs), a broad group of related disorders that represent a major cause of mortality and lifelong disability in children and adults.",
-        "resourceType": [],
+        "resourceType":  [
+            "patientRegistry"
+        ],
         "_id": "",
         "created": "",
         "updated": "",
@@ -325,7 +331,9 @@ const resources = [
         "resourceHomePage": "",
         "eMail": "",
         "resourceDescription": "FAIRVASC is a research project of the European Vasculitis Society (EUVAS) and RITA European Reference Network, bringing together leading scientists, clinicians and patient organisations. The FAIRVASC consortium is made up of 10 partners who represent all of these areas of patient care, also substantial support from VIFOR PHARMA should be acknowledged. There are many important gaps in our knowledge about why and how vasculitis occurs, why some people seem to be more susceptible than others, how the disease process acts inside the body and whether different kinds of vasculitis should be treated in different ways.",
-        "resourceType": [],
+        "resourceType":  [
+            "patientRegistry"
+        ],
         "_id": "",
         "created": "",
         "updated": "",
