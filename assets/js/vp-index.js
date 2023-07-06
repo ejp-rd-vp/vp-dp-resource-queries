@@ -217,7 +217,7 @@ const resources = [
         "eMail": "",
         "resourceDescription": "The EGA provides a service for the permanent archiving and distribution of personally identifiable genetic and phenotypic data resulting from biomedical research projects. Data at EGA was collected from individuals whose consent agreements authorise data release only for specific research use to bona fide researchers. Strict protocols govern how information is managed, stored and distributed by the EGA project.",
         "resourceType": [
-            "Catalog"
+            "Catalog", ""
         ],
         "_id": "",
         "created": "",
