@@ -57,7 +57,7 @@ const resources = [
         "theme": []
     },
     {
-        "resourceName": "BBMRI-Eric",
+        "resourceName": "BBMRI-ERIC",
         "resourceAddress": "http://ejprd.ref.development.bibbox.org/api/ejprd/bbmri/v3/",
         "resourceHomePage": "https://directory.bbmri-eric.eu/",
         "eMail": "contact@bbmri-eric.eu",
