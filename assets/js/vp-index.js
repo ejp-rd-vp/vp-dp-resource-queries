@@ -61,7 +61,7 @@ const resources = [
         "resourceAddress": "http://ejprd.ref.development.bibbox.org/api/ejprd/bbmri/v3/",
         "resourceHomePage": "https://directory.bbmri-eric.eu/",
         "eMail": "contact@bbmri-eric.eu",
-        "resourceDescription": "The BBMRI-Eric catalogue of rare disease registries and biobanks.",
+        "resourceDescription": "The BBMRI-ERIC catalogue of rare disease registries and biobanks.",
         "resourceType": [
             "patientRegistry",
             "biobank"
