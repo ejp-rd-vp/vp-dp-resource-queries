@@ -70,7 +70,7 @@ const resources = [
         "created": "2020-12-02T10:42:09.170Z",
         "updated": "2020-12-02T10:42:09.170Z",
         "specsURL": "",
-        "logo": "",
+        "logo": "https://www.bbmri-eric.eu/wp-content/themes/bbmri-eric/img/bbmri-eric-logo-ohnezusatz.png",
         "resourceContentType": "",
         "queryable": true,
         "queryType": ["search.Catalogue"],
