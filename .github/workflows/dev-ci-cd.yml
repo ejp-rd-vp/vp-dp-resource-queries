@@ -1,0 +1,36 @@
+name: DEV-CI-CD
+  
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+
+  ci:
+
+    runs-on: ubuntu-latest
+    environment: DEV
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build the Docker image
+      run: docker build --build-arg AUTH_SERVER_URL=${{ secrets.AUTH_SERVER_URL }} --build-arg AUTH_REALM=${{ secrets.AUTH_REALM }} --build-arg AUTH_CLIENT_ID=${{ secrets.AUTH_CLIENT_ID }} --build-arg AUTH_KEYS=${{ secrets.AUTH_KEYS }} --tag ${{ secrets.DOCKER_IMAGE_TAG }} --no-cache .
+      
+    - name: Login to Registry
+      run: docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
+      
+    - name: Push the latest DEV image
+      run: docker push ${{ secrets.DOCKER_IMAGE_TAG }}
+    
+  cd:
+    name: Redeploy - Webhook call
+    runs-on: ubuntu-latest
+    environment: DEV
+    needs: ci
+    steps:
+      - name: Redeploy
+        uses: joelwmale/webhook-action@master
+        with:
+          url: ${{ secrets.WEBHOOK_URL  }}
+          headers: ${{ secrets.WEBHOOK_HEADERS  }}

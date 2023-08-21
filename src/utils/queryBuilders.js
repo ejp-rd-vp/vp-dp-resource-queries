@@ -62,12 +62,12 @@ const genderToGenderId = (gender) => {
 module.exports.buildIndividualsBody = async (filters) => {
     let body = {meta: {apiVersion: "v2.0"}, query: {filters: []}}
     if (filters.gender && filters.gender.length > 0 && filters.gender.length !== 4) {
-        for (let gen of filters.gender) {
-            body.query.filters.push({id: GENDER_ID, operator: '=', value: genderToGenderId(gen)})
-        }
+        const genderFilter =
+            { id: GENDER_ID, operator: '=', value: filters.gender.map(gender => genderToGenderId(gender)) }
+        body.query.filters.push(genderFilter)
     }
     if (filters.diseaseCodes) {
-        body.query.filters.push({id: filters.diseaseCodes})
+        body.query.filters.push({id: filters.diseaseCodes.length === 1 ? filters.diseaseCodes[0] : filters.diseaseCodes})
     }
     if (filters.phenotype) {
     }  // TODO

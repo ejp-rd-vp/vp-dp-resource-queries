@@ -23,19 +23,24 @@ const express = require("express")
 const logger = require('../utils/logger')
 const {buildIndividualsBody} = require("../utils/queryBuilders");
 const { executeIndividualsQuery } = require("../utils/queries/individualsQueries");
+const { userIsAuthenticated } = require("../utils/handler/authHandler");
 const getSources = require('../utils/utils').getSources
 const extractQueryParameters = require('../utils/utils').extractQueryParameters
 const withTimeout = require('../utils/utils').withTimeout
 const filterResourceTypes = require('../utils/utils').filterResourceTypes
+const deleteLevel2BFilters = require('../utils/utils').deleteLevel2BFilters
 const buildCatalogueQuery = require('../utils/queryBuilders').buildCatalogueQuery
 const executeCatalogueQuery = require('../utils/queries/catalogueQueries').executeCatalogueQuery
 const executeKnowledgeBaseQuery = require('../utils/queries/knowledgeBaseQueries').executeKnowledgeBaseQuery
 
 const router = express.Router()
 
-const TIMEOUT = 3000
+const TIMEOUT = 6000
 router.get("/", async (request, response) => {
   try {
+    if (!await userIsAuthenticated(request.headers.authorization)) {
+      request.query = deleteLevel2BFilters(request.query)
+    }
     if(request.query.diseases && request.query.diseases.length > 0) {
       let sources = []
       if(!request.query.source) {
@@ -59,10 +64,22 @@ router.get("/", async (request, response) => {
           queryResult = await withTimeout(TIMEOUT, executeCatalogueQuery(source, query))
         } else if (source.queryType.includes('search.Knowledge')) {
           for (let diseaseCode of parameters.diseaseCodes) {
-            const query = `${source.resourceAddress}?code=http://www.orpha.net/ORDO/${parameters.diseaseCodes}`
+            const query = `${source.resourceAddress}?code=http://www.orpha.net/ORDO/${diseaseCode}`
             queryResult = await withTimeout(TIMEOUT, executeKnowledgeBaseQuery(source, query))
             if (queryResult) {
-              dataToBeReturned.push(queryResult)
+              if (dataToBeReturned.length === 0) {
+                dataToBeReturned.push(queryResult)
+              } else {
+                const previousResult = dataToBeReturned[0]
+                const finalContent = previousResult['content']
+                finalContent['resourceResponses'].push(...queryResult['content']['resourceResponses'])
+               const finalResult = {
+                 name: queryResult.name,
+                 numTotalResults: queryResult['numTotalResults'] + previousResult['numTotalResults'],
+                 content: finalContent
+               }
+                dataToBeReturned[0] = finalResult
+              }
             }
           }
           continue

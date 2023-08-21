@@ -176,4 +176,12 @@ const normalizePort = (val) => {
   }
 }
 
-module.exports = { withTimeout, convertResourceResponsesToArray, normalizePort, extractQueryParameters, getSources, extractOrphacode, filterResourceTypes, convertObjectToArray }
+const deleteLevel2BFilters = (query) => {
+  query.genders = null
+  query.ageThisYear = null
+  query.symptomOnset = null
+  query.ageAtDiagnoses = null
+  return query;
+}
+
+module.exports = { withTimeout, convertResourceResponsesToArray, normalizePort, extractQueryParameters, getSources, extractOrphacode, filterResourceTypes, convertObjectToArray, deleteLevel2BFilters }
